@@ -1,0 +1,203 @@
+:root {
+    --bg-dark: #0a0a0c;
+    --card-dark: #141417;
+    --accent-purple: #7c3aed;
+    --accent-purple-hover: #6d28d9;
+    --border-dark: #27272a;
+    --text-main: #f4f4f5;
+    --text-muted: #a1a1aa;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: var(--card-dark);
+    border-bottom: 1px solid var(--border-dark);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+#user-display {
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+/* COMPACT UPLOAD DROPDOWN DESIGN */
+#upload-dropdown-container {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0.75rem;
+    background: var(--card-dark);
+    border: 1px solid var(--border-dark);
+    padding: 1.5rem;
+    border-radius: 12px;
+    width: 320px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-menu h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--border-dark);
+    padding-bottom: 0.5rem;
+}
+
+/* GENERAL UI ELEMENTS */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.card {
+    background: var(--card-dark);
+    border: 1px solid var(--border-dark);
+    padding: 2rem;
+    border-radius: 14px;
+}
+
+/* AUTHENTICATION CENTERING LANDING */
+.auth-card {
+    max-width: 450px;
+    margin: 4rem auto;
+}
+
+/* MAIN DASHBOARD CENTER SEARCH DESIGN */
+.center-search {
+    max-width: 650px;
+    margin: 3rem auto;
+    text-align: center;
+    background: var(--card-dark);
+    border: 1px solid var(--border-dark);
+    padding: 2.5rem;
+    border-radius: 16px;
+}
+
+.center-search h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.filter-inputs-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* FORM ELEMENTS */
+input, select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-dark);
+    color: var(--text-main);
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    transition: border 0.2s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-purple);
+}
+
+/* BUTTON CONTROLS */
+.btn {
+    background-color: var(--accent-purple);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+
+.btn:hover { background-color: var(--accent-purple-hover); }
+.btn.secondary { background-color: #27272a; color: var(--text-main); margin-left: 0.5rem; border: 1px solid var(--border-dark); }
+.btn.secondary:hover { background-color: #3f3f46; }
+.logout-btn { background-color: #dc2626; font-size: 0.9rem; padding: 0.5rem 1rem; }
+.logout-btn:hover { background-color: #b91c1c; }
+
+/* FEED OUTPUT DISPLAY GRID */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.paper-card {
+    background: var(--card-dark);
+    border: 1px solid var(--border-dark);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.paper-card h3 { margin: 0 0 0.5rem 0; color: #fff; }
+.paper-card p { margin: 0.25rem 0; color: var(--text-muted); font-size: 0.95rem; }
+
+.paper-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-top: 0.75rem;
+    border: 1px solid var(--border-dark);
+    cursor: pointer;
+}
+
+/* SLEEK INTERACTIVE PDF ATTACHMENT BLOCKS */
+.pdf-link-box {
+    background-color: var(--bg-dark);
+    border: 1px dashed var(--accent-purple);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 0.75rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.pdf-link-box:hover {
+    background-color: #1e1b4b;
+    transform: translateY(-2px);
+}
+
+.pdf-link-box span {
+    color: var(--text-main);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
