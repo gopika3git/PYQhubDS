@@ -2,7 +2,7 @@
 let currentUser = JSON.parse(sessionStorage.getItem("currentUser")) || null;
 let userToken = sessionStorage.getItem("userToken") || null;
 
-const IMAGEKIT_URL_ENDPOINT = "https://ik.imagekit.io/goqp123/"; 
+const IMAGEKIT_URL_ENDPOINT = "https://ik.imagekit.io/goqp123"; 
 const IMAGEKIT_PUBLIC_KEY = "public_0qoA3EltjzuJLUw80ihXx5hs8SQ=";
 
 // Official Frontend SDK format
