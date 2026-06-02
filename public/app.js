@@ -1,37 +1,22 @@
-// Global State Tracker
-let currentUser = null;
-let userToken = null;
+// Global State Tracker (Restored from Session Storage if available)
+let currentUser = JSON.parse(sessionStorage.getItem("currentUser")) || null;
+let userToken = sessionStorage.getItem("userToken") || null;
 
 const IMAGEKIT_URL_ENDPOINT = "https://ik.imagekit.io/goqp123/"; 
 const IMAGEKIT_PUBLIC_KEY = "public_0qoA3EltjzuJLUw80ihXx5hs8SQ=";
-
-const imagekit = new ImageKit({
-    publicKey: IMAGEKIT_PUBLIC_KEY, 
-    urlEndpoint: IMAGEKIT_URL_ENDPOINT,
-    authenticationEndpoint: "http://localhost:5001/api/imagekit-auth"
-});
-
-// Helper utility to cleanly parse files into Base64 formats
-const convertFileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result); 
-        reader.onerror = (error) => reject(error);
-    });
-};
 
 // --- AUTOMATIC LOADING ON START ---
 document.addEventListener("DOMContentLoaded", () => {
     fetchPapers();
     setupDropdownToggle();
+    checkExistingAuth(); // Restore UI state if user was already logged in
 });
 
 function setupDropdownToggle() {
     const toggleBtn = document.getElementById("toggle-upload-btn");
     const menu = document.getElementById("upload-dropdown-menu");
 
-    if(toggleBtn && menu) {
+    if (toggleBtn && menu) {
         toggleBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             menu.classList.toggle("show");
@@ -45,6 +30,20 @@ function setupDropdownToggle() {
     }
 }
 
+// Check session on page reload
+function checkExistingAuth() {
+    if (currentUser && userToken) {
+        document.getElementById("user-display").innerText = `Welcome, ${currentUser.name} (${currentUser.role})`;
+        document.getElementById("logout-btn").style.display = "inline-block";
+        document.getElementById("auth-section").style.display = "none";
+        
+        document.getElementById("main-app-content").style.display = "block";
+        document.getElementById("upload-dropdown-container").style.display = "block";
+        
+        applyRoleBasedUI();
+    }
+}
+
 // ==========================================
 // REGISTRATION AND LOGIN UTILITIES
 // ==========================================
@@ -54,59 +53,75 @@ document.getElementById("register-btn").addEventListener("click", async () => {
     const password = document.getElementById("auth-password").value;
     const role = "student"; 
 
-    const res = await fetch("http://localhost:5001/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, role })
-    });
-    const data = await res.json();
-    alert(data.message || data.error);
+    if (!name || !email || !password) {
+        alert("Please fill out all registration fields.");
+        return;
+    }
+
+    try {
+        const res = await fetch("http://localhost:5001/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password, role })
+        });
+        const data = await res.json();
+        alert(data.message || data.error);
+    } catch (err) {
+        alert("Registration failed. Backend might be offline.");
+    }
 });
 
 document.getElementById("login-btn").addEventListener("click", async () => {
     const email = document.getElementById("auth-email").value;
     const password = document.getElementById("auth-password").value;
 
-    const res = await fetch("http://localhost:5001/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
+    try {
+        const res = await fetch("http://localhost:5001/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
 
-    if (res.ok) {
-        currentUser = data.user; // Stores user object including role ('admin' or 'student')
-        userToken = data.token;
-        
-        document.getElementById("user-display").innerText = `Welcome, ${currentUser.name} (${currentUser.role})`;
-        document.getElementById("logout-btn").style.display = "inline-block";
-        document.getElementById("auth-section").style.display = "none";
-        
-        document.getElementById("main-app-content").style.display = "block";
-        document.getElementById("upload-dropdown-container").style.display = "block";
-        
-        // Let's run a function to manage UI views depending on role
-        applyRoleBasedUI();
-    } else {
-        alert(data.message || "Login failed");
+        if (res.ok) {
+            currentUser = data.user; 
+            userToken = data.token;
+            
+            // Save state so page reloads don't break authentication
+            sessionStorage.setItem("currentUser", JSON.stringify(currentUser));
+            sessionStorage.setItem("userToken", userToken);
+            
+            document.getElementById("user-display").innerText = `Welcome, ${currentUser.name} (${currentUser.role})`;
+            document.getElementById("logout-btn").style.display = "inline-block";
+            document.getElementById("auth-section").style.display = "none";
+            
+            document.getElementById("main-app-content").style.display = "block";
+            document.getElementById("upload-dropdown-container").style.display = "block";
+            
+            applyRoleBasedUI();
+            fetchPapers(); // Re-fetch to show authorized delete parameters
+        } else {
+            alert(data.message || "Login failed");
+        }
+    } catch (err) {
+        alert("Login failed. Check backend connection.");
     }
 });
 
 document.getElementById("logout-btn").addEventListener("click", () => {
     currentUser = null;
     userToken = null;
+    sessionStorage.clear();
     window.location.reload();
 });
 
-// Helper function to manage what admins see vs what students see
 function applyRoleBasedUI() {
     const deleteButtons = document.querySelectorAll(".delete-btn");
-    
     deleteButtons.forEach(btn => {
         if (currentUser && currentUser.role === 'admin') {
-            btn.style.display = "inline-block"; // Show delete option to you
+            btn.style.setProperty("display", "inline-block", "important");
         } else {
-            btn.style.display = "none"; // Hide delete option from ordinary students
+            btn.style.setProperty("display", "none", "important");
         }
     });
 }
@@ -117,32 +132,66 @@ function applyRoleBasedUI() {
 document.getElementById("upload-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const statusText = document.getElementById("upload-status");
+    
+    // Front-end Guard: Prevent guest uploads
+    if (!userToken) {
+        statusText.innerText = "❌ You must be logged in to upload.";
+        return;
+    }
+
     statusText.innerText = "Processing files...";
 
     const files = document.getElementById("file-input").files;
+    if (!files || files.length === 0) {
+        statusText.innerText = "❌ Please choose a file first.";
+        return;
+    }
+
     const uploadedImages = [];
 
     try {
         for (let file of files) {
-            statusText.innerText = `Converting ${file.name}...`;
-            const base64FileString = await convertFileToBase64(file);
+            statusText.innerText = `Fetching authorization parameters...`;
 
-            statusText.innerText = `Uploading to ImageKit...`;
+            // 1. Fetch secure credentials from backend
+            const authRes = await fetch("http://localhost:5001/api/imagekit-auth");
+            if (!authRes.ok) throw new Error("Could not acquire secure credentials from server.");
+            const authData = await authRes.json();
+
+            statusText.innerText = `Uploading ${file.name} to ImageKit...`;
             
-            const uploadResponse = await imagekit.upload({
-                file: base64FileString,
-                fileName: file.name,
-                folder: "/pyq_papers"
+            // 2. Package parameters directly into standard multipart FormData
+            const uploadFormData = new FormData();
+            uploadFormData.append("file", file); 
+            uploadFormData.append("fileName", file.name);
+            uploadFormData.append("folder", "/pyq_papers");
+            uploadFormData.append("publicKey", IMAGEKIT_PUBLIC_KEY);
+            
+            uploadFormData.append("signature", authData.signature);
+            uploadFormData.append("token", authData.token);
+            uploadFormData.append("expire", String(authData.expire)); 
+
+            // 3. Post payload directly to ImageKit's official upload endpoint
+            const uploadResponse = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
+                method: "POST",
+                body: uploadFormData
             });
             
+            if (!uploadResponse.ok) {
+                const errorPayload = await uploadResponse.json();
+                throw new Error(errorPayload.message || "Storage upload failed");
+            }
+
+            const uploadResult = await uploadResponse.json();
+            
             uploadedImages.push({
-                fileId: uploadResponse.fileId,
-                url: uploadResponse.url,
-                thumbnailUrl: uploadResponse.thumbnailUrl
+                fileId: uploadResult.fileId,
+                url: uploadResult.url,
+                thumbnailUrl: uploadResult.thumbnailUrl || uploadResult.url
             });
         }
 
-        statusText.innerText = "Saving to database...";
+        statusText.innerText = "Saving metadata to database...";
 
         const paperMetadata = {
             subjectName: document.getElementById("sub-name").value,
@@ -156,7 +205,7 @@ document.getElementById("upload-form").addEventListener("submit", async (e) => {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${userToken}` // Pass token to backend securely
+                "Authorization": `Bearer ${userToken}` 
             },
             body: JSON.stringify(paperMetadata)
         });
@@ -184,9 +233,9 @@ document.getElementById("upload-form").addEventListener("submit", async (e) => {
 // FETCH AND RENDER ENGINE
 // ==========================================
 async function fetchPapers() {
-    const subName = document.getElementById("filter-sub-name").value;
-    const subCode = document.getElementById("filter-sub-code").value;
-    const type = document.getElementById("filter-type").value;
+    const subName = document.getElementById("filter-sub-name")?.value || "";
+    const subCode = document.getElementById("filter-sub-code")?.value || "";
+    const type = document.getElementById("filter-type")?.value || "";
     
     let url = `http://localhost:5001/api/papers/list?`;
     if (subName) url += `subjectName=${encodeURIComponent(subName)}&`;
@@ -198,10 +247,11 @@ async function fetchPapers() {
         const papers = await res.json();
         
         const grid = document.getElementById("papers-grid");
+        if (!grid) return;
         grid.innerHTML = ""; 
 
-        if (papers.length === 0) {
-            grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No papers found matching these filters.</p>`;
+        if (!papers || papers.length === 0) {
+            grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: gray;">No papers found matching these filters.</p>`;
             return;
         }
 
@@ -222,7 +272,7 @@ async function fetchPapers() {
                                     <span>📄 Open PDF Question Paper</span>
                                 </div>`;
                         } else {
-                            return `<img src="${img.thumbnailUrl || img.url}" onclick="window.open('${img.url}', '_blank')" title="Click to view full image">`;
+                            return `<img src="${img.thumbnailUrl || img.url}" onclick="window.open('${img.url}', '_blank')" title="Click to view full image" style="max-width:100px; cursor:pointer; margin:5px;">`;
                         }
                     }).join('') : '<p style="color: grey; font-style: italic;">No attached preview files.</p>'}
                 </div>
@@ -231,15 +281,19 @@ async function fetchPapers() {
             grid.appendChild(card);
         });
 
-        // Trigger dynamic layout formatting changes right after rendering items
+        // Run immediately after cards are injected into the DOM tree
         applyRoleBasedUI();
     } catch (error) {
         console.error("Error loading papers configuration:", error);
     }
 }
 
-// Global scope attachment so the inline HTML click listener can find the delete operation logic
+// Assigned globally to window scope safely
 window.deletePaper = async function(paperId) {
+    if (!userToken) {
+        alert("You must be logged in as Admin to perform this action.");
+        return;
+    }
     if (!confirm("Are you sure you want to delete this paper?")) return;
 
     try {
@@ -251,16 +305,15 @@ window.deletePaper = async function(paperId) {
         });
 
         const data = await res.json();
-        alert(data.message);
+        alert(data.message || "Paper structural layout updated.");
         if (res.ok) {
-            fetchPapers(); // Reload layout cleanly
+            fetchPapers(); 
         }
     } catch (err) {
         console.error("Error running request delete execution:", err);
     }
 };
 
-// Fixed execution intercept to stop native HTML form submission behaviors
 document.getElementById("search-btn").addEventListener("click", (e) => {
     e.preventDefault(); 
     fetchPapers();
