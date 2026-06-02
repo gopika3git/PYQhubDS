@@ -32,24 +32,23 @@ const imagekit = new ImageKit({
 
 // Handshake endpoint mapped exactly to what app.js expects
 // ImageKit authentication handshake token route
+// ImageKit authentication handshake token route
 app.get('/api/imagekit-auth', (req, res) => {
   try {
       console.log("🔑 Frontend requested a secure ImageKit token signature...");
       
       const authParams = imagekit.getAuthenticationParameters();
       
-      console.log("🔍 Raw parameters from SDK:", authParams);
-
-      // FORCE explicit parameter names so the frontend SDK never receives "undefined"
+      // 🛡️ Force explicit parameter mapping so the frontend never gets an "undefined" value
       res.json({
           signature: authParams.signature,
           token: authParams.token,
-          expire: authParams.expire || authParams.expiry // Catches BOTH naming variations safely!
+          expire: authParams.expire || authParams.expiry // <-- This fixes the version naming bug
       });
       
   } catch (error) {
       console.error("❌ ImageKit Handshake Failed:", error.message);
-      res.status(500).json({ error: "Failed to generate ImageKit auth parameters", details: error.message });
+      res.status(500).json({ error: "Failed to generate ImageKit auth parameters" });
   }
 });
 

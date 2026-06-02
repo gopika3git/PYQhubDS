@@ -5,6 +5,13 @@ let userToken = sessionStorage.getItem("userToken") || null;
 const IMAGEKIT_URL_ENDPOINT = "https://ik.imagekit.io/goqp123/"; 
 const IMAGEKIT_PUBLIC_KEY = "public_0qoA3EltjzuJLUw80ihXx5hs8SQ=";
 
+// Official Frontend SDK format
+const imagekit = new ImageKit({
+    publicKey: IMAGEKIT_PUBLIC_KEY, 
+    urlEndpoint: IMAGEKIT_URL_ENDPOINT,
+    authenticationEndpoint: "http://localhost:5001/api/imagekit-auth"
+});
+
 // --- AUTOMATIC LOADING ON START ---
 document.addEventListener("DOMContentLoaded", () => {
     fetchPapers();
