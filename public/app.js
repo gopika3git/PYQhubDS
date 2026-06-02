@@ -9,7 +9,7 @@ const IMAGEKIT_PUBLIC_KEY = "public_0qoA3EltjzuJLUw80ihXx5hs8SQ=";
 const imagekit = new ImageKit({
     publicKey: IMAGEKIT_PUBLIC_KEY, 
     urlEndpoint: IMAGEKIT_URL_ENDPOINT,
-    authenticationEndpoint: "http://localhost:5001/api/imagekit-auth"
+    authenticationEndpoint: "https://pyqhubds.onrender.com/api/imagekit-auth"
 });
 
 // --- AUTOMATIC LOADING ON START ---
@@ -66,7 +66,7 @@ document.getElementById("register-btn").addEventListener("click", async () => {
     }
 
     try {
-        const res = await fetch("http://localhost:5001/api/auth/register", {
+        const res = await fetch("https://pyqhubds.onrender.com/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, email, password, role })
@@ -83,7 +83,7 @@ document.getElementById("login-btn").addEventListener("click", async () => {
     const password = document.getElementById("auth-password").value;
 
     try {
-        const res = await fetch("http://localhost:5001/api/auth/login", {
+        const res = await fetch("https://pyqhubds.onrender.com/api/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
@@ -161,7 +161,7 @@ document.getElementById("upload-form").addEventListener("submit", async (e) => {
             statusText.innerText = `Fetching authorization parameters...`;
 
             // 1. Fetch secure credentials from backend
-            const authRes = await fetch("http://localhost:5001/api/imagekit-auth");
+            const authRes = await fetch("https://pyqhubds.onrender.com/api/imagekit-auth");
             if (!authRes.ok) throw new Error("Could not acquire secure credentials from server.");
             const authData = await authRes.json();
 
@@ -208,7 +208,7 @@ document.getElementById("upload-form").addEventListener("submit", async (e) => {
             uploadedBy: currentUser ? (currentUser._id || currentUser.id) : null
         };
 
-        const dbRes = await fetch("http://localhost:5001/api/papers/upload", {
+        const dbRes = await fetch("https://pyqhubds.onrender.com/api/papers/upload", {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
@@ -244,7 +244,7 @@ async function fetchPapers() {
     const subCode = document.getElementById("filter-sub-code")?.value || "";
     const type = document.getElementById("filter-type")?.value || "";
     
-    let url = `http://localhost:5001/api/papers/list?`;
+    let url = `https://pyqhubds.onrender.com/api/papers/list?`;
     if (subName) url += `subjectName=${encodeURIComponent(subName)}&`;
     if (subCode) url += `subjectCode=${encodeURIComponent(subCode)}&`;
     if (type) url += `examType=${type}`;
@@ -304,7 +304,7 @@ window.deletePaper = async function(paperId) {
     if (!confirm("Are you sure you want to delete this paper?")) return;
 
     try {
-        const res = await fetch(`http://localhost:5001/api/papers/${paperId}`, {
+        const res = await fetch(`https://pyqhubds.onrender.com/api/papers/${paperId}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${userToken}`
