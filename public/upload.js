@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const imagekit = new ImageKit({
     publicKey: "youpublic_0qoA3EltjzuJLUw80ihXx5h=",
     urlEndpoint: "https://ik.imagekit.io/goqp123",
-    authenticationEndpoint: "https://pyqhubds.onrender.com/api/imagekit-auth"
+    authenticationEndpoint: "https://pyqhubds.onrender.com/api/imagekit-auth" // Points directly to endpoint in server.js
 });
 
 // --- 3. UPLOAD AND MAPPING CONTROL ---
@@ -48,7 +48,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     const savedToken = localStorage.getItem('token');
 
     if (files.length === 0) {
-        alert("Please select a PDF file to upload.");
+        alert("Select a PDF file to upload.");
         return;
     }
 
@@ -59,7 +59,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     try {
         const uploadedImages = [];
 
-        // Upload the PDF directly using ImageKit, passing headers via custom request parameters if needed
+        // Upload the PDF directly using ImageKit
         const ikResponse = await new Promise((resolve, reject) => {
             imagekit.upload({
                 file: file,
