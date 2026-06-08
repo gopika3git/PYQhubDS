@@ -1,77 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-site-verification" content="mZNbp8XSokXbzS2CV6Vw68Gnjr6R70dqJ7v7WGXzm-U" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PYQhubDS - College Question Papers</title>
+    <title>PYQhubDS - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="https://unpkg.com/imagekit-javascript@1.5.1/dist/imagekit.min.js"></script>
 </head>
-<body>
-    <header>
-        <h1 class="logo">🎓 PYQhubDS</h1>
-        <div id="nav-actions">
-            <span id="user-display">Welcome, Guest</span>
-            
-            <div id="upload-dropdown-container" style="display: none;">
-                <button id="toggle-upload-btn" class="btn action-btn">📤 Upload PYQ</button>
-                <div id="upload-dropdown-menu" class="dropdown-menu">
-                    <h3>Upload Question Paper</h3>
-                    <form id="upload-form">
-                        <input type="text" id="sub-name" placeholder="Subject Name (e.g., Network Security)" required>
-                        <input type="text" id="sub-code" placeholder="Subject Code (e.g., CSE3002)" required>
-                        <select id="exam-type">
-                            <option value="CAT-1">CAT-1</option>
-                            <option value="CAT-2">CAT-2</option>
-                            <option value="FAT">FAT</option>
-                        </select>
-                        <input type="file" id="file-input" accept="image/*,.pdf" multiple required>
-                        <button type="submit" class="btn submit-btn">Upload Paper</button>
-                    </form>
-                    <p id="upload-status"></p>
-                </div>
-            </div>
+<body class="auth-body">
 
-            <button id="logout-btn" style="display:none;" class="btn logout-btn">Logout</button>
-        </div>
-    </header>
+    <div class="top-bar">
+        <button id="theme-toggle-btn" class="theme-btn">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </div>
 
-    <main class="container">
-        <section id="auth-section" class="card auth-card">
+    <main class="auth-container">
+        <section class="card auth-card">
             <h2>Login / Register</h2>
             <div class="form-group">
                 <input type="text" id="auth-name" placeholder="Full Name (for registration)">
-                <input type="email" id="auth-email" placeholder="Email Address">
-                <input type="password" id="auth-password" placeholder="Password">
-                <select id="auth-role" style="display: none;"><option value="student" selected>Student</option></select>
+                <input type="email" id="auth-email" placeholder="Email Address" required>
+                
+                <div class="password-wrapper">
+                    <input type="password" id="auth-password" placeholder="Password" required>
+                    <i class="fa-solid fa-eye" id="toggle-password-eye"></i>
+                </div>
+                
                 <div class="auth-buttons">
                     <button id="login-btn" class="btn">Login</button>
                     <button id="register-btn" class="btn secondary">Register</button>
                 </div>
             </div>
         </section>
-
-        <div id="main-app-content" style="display: none;">
-            <section id="filter-section" class="center-search">
-                <h2>🔍 Find Past Papers</h2>
-                <div class="filter-inputs-container">
-                    <input type="text" id="filter-sub-name" placeholder="Search by Subject Name">
-                    <input type="text" id="filter-sub-code" placeholder="Search by Subject Code (e.g. CSE3002)">
-                    <select id="filter-type">
-                        <option value="">All Exam Types</option>
-                        <option value="CAT-1">CAT-1</option>
-                        <option value="CAT-2">CAT-2</option>
-                        <option value="FAT">FAT</option>
-                    </select>
-                    <button id="search-btn" class="btn search-btn">Filter Papers</button>
-                </div>
-            </section>
-
-            <section id="papers-grid" class="grid"></section>
-        </div>
     </main>
 
-    <script src="app.js"></script>
+    <script src="auth.js"></script>
 </body>
 </html>

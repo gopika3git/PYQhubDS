@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PYQhubDS - Upload Paper</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="https://unpkg.com/imagekit-javascript@1.5.1/dist/imagekit.min.js"></script>
+</head>
+<body>
+
+    <header class="main-header">
+        <h1 class="logo" onclick="window.location.href='/dashboard.html'">🎓 PYQhubDS</h1>
+        <div id="nav-actions">
+            <button id="theme-toggle-btn" class="theme-btn"><i class="fa-solid fa-moon"></i></button>
+            <button class="btn action-btn" onclick="window.location.href='/dashboard.html'">⬅ Back to Feed</button>
+        </div>
+    </header>
+
+    <main class="container auth-container">
+        <section class="card upload-card">
+            <h2>Upload Question Paper</h2>
+            <form id="upload-form" class="form-group">
+                <input type="text" id="sub-name" placeholder="Subject Name (e.g., Network Security)" required>
+                <input type="text" id="sub-code" placeholder="Subject Code (e.g., CSE3002)" required>
+                
+                <select id="exam-type" class="dropdown-select">
+                    <option value="CAT-1">CAT-1</option>
+                    <option value="CAT-2">CAT-2</option>
+                    <option value="FAT">FAT</option>
+                </select>
+                
+                <label class="file-label" for="file-input">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Select Paper Images
+                </label>
+                <input type="file" id="file-input" accept="image/*" multiple required style="display: none;">
+                <div id="file-count">No files selected</div>
+
+                <button type="submit" id="submit-upload-btn" class="btn">Upload Paper</button>
+            </form>
+            <p id="upload-status"></p>
+        </section>
+    </main>
+
+    <script src="upload.js"></script>
+</body>
+</html>
