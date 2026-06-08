@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const imagekit = new ImageKit({
     publicKey: "youpublic_0qoA3EltjzuJLUw80ihXx5h=",
     urlEndpoint: "https://ik.imagekit.io/goqp123",
-    authenticationEndpoint: "https://pyqhubds.onrender.com/api/papers/auth" 
+    authenticationEndpoint: "https://pyqhubds.onrender.com/api/imagekit-auth" // 🔥 FIXED: Changed from /api/papers/auth to match server.js
 });
 
 // --- 3. UPLOAD AND MAPPING CONTROL ---
@@ -50,7 +50,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
         return;
     }
 
-    const file = files[0]; // Grab the native PDF file
+    const file = files[0];
 
     submitBtn.disabled = true;
     statusMsg.innerText = "Uploading PDF document to ImageKit...";
@@ -74,7 +74,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
         uploadedImages.push({
             fileId: ikResponse.fileId,
             url: ikResponse.url,
-            thumbnailUrl: "https://ik.imagekit.io/goqp123/default-pdf-icon.png" // Fallback icon link
+            thumbnailUrl: "https://ik.imagekit.io/goqp123/default-pdf-icon.png"
         });
 
         statusMsg.innerText = "Saving data to MongoDB database...";
