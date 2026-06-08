@@ -41,14 +41,19 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Main layout structure to query your Render backend endpoints 
+// Updated structure to find out exactly why the backend is rejecting the request
 async function fetchPapers() {
     const grid = document.getElementById('papers-grid');
     try {
-        // Updated to point directly to your live Render server
         const response = await fetch('https://pyqhubds.onrender.com/api/papers', {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
+        
+        // Print the status code to see if it's a 401 (Unauthorized), 403 (Forbidden), or 404 (Not Found)
+        console.log("Backend Response Status:", response.status);
+        
         const papers = await response.json();
+        console.log("Data received from backend:", papers);
         
         if (response.ok && papers.length > 0) {
             grid.innerHTML = papers.map(paper => `
@@ -62,6 +67,7 @@ async function fetchPapers() {
             grid.innerHTML = `<p class="no-data">No papers uploaded yet.</p>`;
         }
     } catch (err) {
+        console.error("Detailed Fetch Error:", err);
         grid.innerHTML = `<p class="no-data">Error fetching files from database.</p>`;
     }
 }
