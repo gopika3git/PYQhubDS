@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- 2. IMAGEKIT INITIALIZATION ---
 const imagekit = new ImageKit({
-    publicKey: "youpublic_0qoA3EltjzuJLUw80ihXx5h=",
+    publicKey: "public_0qoA3EltjzuJLUw80ihXx5hs8SQ=",
     urlEndpoint: "https://ik.imagekit.io/goqp123",
     authenticationEndpoint: "https://pyqhubds.onrender.com/api/imagekit-auth"
 });
