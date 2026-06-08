@@ -15,11 +15,14 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
     });
 
-    // Update chosen file name display count
+    // Update chosen file name display
     const fileInput = document.getElementById('file-input');
     fileInput.addEventListener('change', () => {
-        const count = fileInput.files.length;
-        document.getElementById('file-count').innerText = `${count} file(s) selected`;
+        if (fileInput.files.length > 0) {
+            document.getElementById('file-count').innerText = fileInput.files[0].name;
+        } else {
+            document.getElementById('file-count').innerText = "No file selected";
+        }
     });
 });
 
@@ -36,43 +39,47 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     const statusMsg = document.getElementById('upload-status');
     const submitBtn = document.getElementById('submit-upload-btn');
     
-    const files = document.getElementById('file-input').files;
+    const fileInput = document.getElementById('file-input');
+    const files = fileInput.files;
     const subjectName = document.getElementById('sub-name').value;
     const subjectCode = document.getElementById('sub-code').value;
     const examType = document.getElementById('exam-type').value;
 
+    if (files.length === 0) {
+        alert("Please select a PDF file to upload.");
+        return;
+    }
+
+    const file = files[0]; // Grab the native PDF file
+
     submitBtn.disabled = true;
-    statusMsg.innerText = "Uploading images to ImageKit...";
+    statusMsg.innerText = "Uploading PDF document to ImageKit...";
 
     try {
         const uploadedImages = [];
 
-        // Upload files sequentially loop
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            
-            // Send to ImageKit directly
-            const ikResponse = await new Promise((resolve, reject) => {
-                imagekit.upload({
-                    file: file,
-                    fileName: `${subjectCode}_${examType}_page_${i+1}.jpg`,
-                    folder: "/pyqs"
-                }, (err, result) => {
-                    if (err) reject(err);
-                    else resolve(result);
-                });
+        // Upload the PDF directly using ImageKit
+        const ikResponse = await new Promise((resolve, reject) => {
+            imagekit.upload({
+                file: file,
+                fileName: `${subjectCode}_${examType}.pdf`,
+                folder: "/pyqs"
+            }, (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
             });
+        });
 
-            uploadedImages.push({
-                fileId: ikResponse.fileId,
-                url: ikResponse.url,
-                thumbnailUrl: ikResponse.thumbnailUrl
-            });
-        }
+        // Map the PDF response data cleanly into your existing array structure
+        uploadedImages.push({
+            fileId: ikResponse.fileId,
+            url: ikResponse.url,
+            thumbnailUrl: "https://ik.imagekit.io/goqp123/default-pdf-icon.png" // Fallback icon link
+        });
 
         statusMsg.innerText = "Saving data to MongoDB database...";
 
-        // MATCHED ROUTE: Pointing to your verified POST /api/papers/upload route
+        // Send final bundle payload down to Render
         const backendResponse = await fetch('https://pyqhubds.onrender.com/api/papers/upload', { 
             method: 'POST',
             headers: {
@@ -83,7 +90,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
         });
 
         if (backendResponse.ok) {
-            statusMsg.innerText = "🚀 Paper uploaded successfully!";
+            statusMsg.innerText = "🚀 PDF Paper uploaded successfully!";
             setTimeout(() => { window.location.href = '/dashboard.html'; }, 1500);
         } else {
             const errData = await backendResponse.json();
