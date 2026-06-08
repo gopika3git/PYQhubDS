@@ -52,11 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Main layout structure to query your Render backend endpoints
+// Inside public/dashboard.js -> replace your fetchPapers function with this:
 async function fetchPapers(subName = '', subCode = '', examType = '') {
     const grid = document.getElementById('papers-grid');
     try {
-        // Construct query parameters cleanly if filters are typed out
-        let queryUrl = 'https://pyqhubds.onrender.com/api/papers/all';
+        // MATCHED ROUTE: changed from /all to /list
+        let queryUrl = 'https://pyqhubds.onrender.com/api/papers/list';
         const params = new URLSearchParams();
         if (subName) params.append('subjectName', subName);
         if (subCode) params.append('subjectCode', subCode);
