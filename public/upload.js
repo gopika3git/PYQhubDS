@@ -24,11 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- 2. IMAGEKIT INITIALIZATION ---
-// Replace these dummy values with your actual ImageKit details
+// Replace dummy credentials with your real ImageKit keys
 const imagekit = new ImageKit({
-    publicKey: "your_imagekit_public_key",
-    urlEndpoint: "https://ik.imagekit.io/your_imagekit_id",
-    authenticationEndpoint: "http://localhost:5000/api/papers/auth" // Your node backend URL
+    publicKey: "youpublic_0qoA3EltjzuJLUw80ihXx5h=",
+    urlEndpoint: "https://ik.imagekit.io/goqp123",
+    authenticationEndpoint: "https://pyqhubds.onrender.com/api/papers/auth" // Updated to Render
 });
 
 // --- 3. UPLOAD AND MAPPING CONTROL ---
@@ -73,8 +73,8 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
 
         statusMsg.innerText = "Saving data to MongoDB database...";
 
-        // Send final bundle to backend server node
-        const backendResponse = await fetch('/api/papers', {
+        // Send final bundle to backend server node on Render
+        const backendResponse = await fetch('https://pyqhubds.onrender.com/api/papers', { // Updated to Render
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -40,11 +40,12 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchPapers();
 });
 
-// Sample boilerplate layout structure to query backend endpoints 
+// Main layout structure to query your Render backend endpoints 
 async function fetchPapers() {
     const grid = document.getElementById('papers-grid');
     try {
-        const response = await fetch('/api/papers', {
+        // Updated to point directly to your live Render server
+        const response = await fetch('https://pyqhubds.onrender.com/api/papers', {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         const papers = await response.json();
