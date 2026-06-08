@@ -12,12 +12,8 @@
     <header>
         <h1 class="logo">🎓 PYQhubDS</h1>
         <div id="nav-actions">
-            <div class="nav-right">
-                <button id="themeToggle" class="theme-btn">
-                  <i class="fa-solid fa-moon"></i>
-                </button>
-                <span class="welcome-text">Welcome, Guest</span>
-            </div>
+            <span id="user-display">Welcome, Guest</span>
+            
             <div id="upload-dropdown-container" style="display: none;">
                 <button id="toggle-upload-btn" class="btn action-btn">📤 Upload PYQ</button>
                 <div id="upload-dropdown-menu" class="dropdown-menu">
@@ -47,10 +43,7 @@
             <div class="form-group">
                 <input type="text" id="auth-name" placeholder="Full Name (for registration)">
                 <input type="email" id="auth-email" placeholder="Email Address">
-                <div class="password-container">
-                <input type="password" id="password" placeholder="Password" required />
-                <i class="fa-solid fa-eye" id="togglePassword"></i>
-                </div>
+                <input type="password" id="auth-password" placeholder="Password">
                 <select id="auth-role" style="display: none;"><option value="student" selected>Student</option></select>
                 <div class="auth-buttons">
                     <button id="login-btn" class="btn">Login</button>

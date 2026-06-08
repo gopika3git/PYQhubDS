@@ -57,20 +57,7 @@ function checkExistingAuth() {
 document.getElementById("register-btn").addEventListener("click", async () => {
     const name = document.getElementById("auth-name").value;
     const email = document.getElementById("auth-email").value;
-    const togglePassword = document.querySelector('#togglePassword');
-    const passwordInput = document.querySelector('#password');
-
-    if (togglePassword && passwordInput) {
-    togglePassword.addEventListener('click', function () {
-        // Toggle the type attribute
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        
-        // Toggle the eye / eye-slash icon
-        this.classList.toggle('fa-eye');
-        this.classList.toggle('fa-eye-slash');
-    });
-    }
+    const password = document.getElementById("auth-password").value;
     const role = "student"; 
 
     if (!name || !email || !password) {
