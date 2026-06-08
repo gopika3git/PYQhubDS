@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     // --- 1. SESSION GUARD ---
     const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!token || !user) {
+    const userRaw = localStorage.getItem('user');
+    
+    if (!token || !userRaw) {
         window.location.href = '/index.html';
         return;
     }
@@ -46,19 +47,30 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     const examType = document.getElementById('exam-type').value;
 
     const savedToken = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user'));
+    const userRaw = localStorage.getItem('user');
 
     if (files.length === 0) {
         alert("Please select a PDF file to upload.");
         return;
     }
 
-    // Grab user ID safely from the session storage object to satisfy schema validation
-    const uploadedBy = user ? (user.id || user._id) : null;
+    // COMPREHENSIVE SAFEST EXTRACTION FILTER FOR USER ID
+    let uploadedBy = null;
+    try {
+        const parsedUser = JSON.parse(userRaw);
+        if (parsedUser) {
+            // Checks Mongoose default _id first, then standard id, then secondary properties
+            uploadedBy = parsedUser._id || parsedUser.id || parsedUser.userId;
+        }
+    } catch (parseError) {
+        // Fallback case: If 'user' in local storage was saved directly as a raw ID string instead of JSON object
+        uploadedBy = userRaw;
+    }
 
-    if (!uploadedBy) {
-        alert("Session error: User identity not found. Please log in again.");
-        window.location.href = '/index.html';
+    // Ultimate fallback catch to prevent database validation errors
+    if (!uploadedBy || uploadedBy === "null" || uploadedBy === "undefined") {
+        console.error("Authentication mapping failure. LocalStorage state:", userRaw);
+        alert("Session validation failed: User identity key not found. Please log out and log back in.");
         return;
     }
 
@@ -102,7 +114,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
                 subjectCode, 
                 examType, 
                 images: uploadedImages,
-                uploadedBy: uploadedBy // 🔥 FIXED: Sent user ID along to bypass database schema block
+                uploadedBy: uploadedBy // Sent securely with sanitized variable mapping validation
             })
         });
 
