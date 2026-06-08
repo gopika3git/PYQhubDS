@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const imagekit = new ImageKit({
     publicKey: "youpublic_0qoA3EltjzuJLUw80ihXx5h=",
     urlEndpoint: "https://ik.imagekit.io/goqp123",
-    authenticationEndpoint: "https://pyqhubds.onrender.com/api/imagekit-auth" // 🔥 FIXED: Changed from /api/papers/auth to match server.js
+    authenticationEndpoint: "https://pyqhubds.onrender.com/api/imagekit-auth"
 });
 
 // --- 3. UPLOAD AND MAPPING CONTROL ---
@@ -45,20 +45,21 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     const subjectCode = document.getElementById('sub-code').value;
     const examType = document.getElementById('exam-type').value;
 
+    const savedToken = localStorage.getItem('token');
+
     if (files.length === 0) {
         alert("Please select a PDF file to upload.");
         return;
     }
 
     const file = files[0];
-
     submitBtn.disabled = true;
     statusMsg.innerText = "Uploading PDF document to ImageKit...";
 
     try {
         const uploadedImages = [];
 
-        // Upload the PDF directly using ImageKit
+        // Upload the PDF directly using ImageKit, passing headers via custom request parameters if needed
         const ikResponse = await new Promise((resolve, reject) => {
             imagekit.upload({
                 file: file,
@@ -79,12 +80,12 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
 
         statusMsg.innerText = "Saving data to MongoDB database...";
 
-        // Send final bundle payload down to Render
+        // Send final bundle payload down to Render with explicit Bearer token header syntax
         const backendResponse = await fetch('https://pyqhubds.onrender.com/api/papers/upload', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${savedToken}`
             },
             body: JSON.stringify({ subjectName, subjectCode, examType, images: uploadedImages })
         });
@@ -94,11 +95,11 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
             setTimeout(() => { window.location.href = '/dashboard.html'; }, 1500);
         } else {
             const errData = await backendResponse.json();
-            throw new Error(errData.message || "Failed to save data");
+            throw new Error(errData.message || errData.error || "Failed to save data");
         }
 
     } catch (err) {
-        console.error(err);
+        console.error("Upload error client side trace:", err);
         statusMsg.innerText = `❌ Error: ${err.message || "Something went wrong"}`;
         submitBtn.disabled = false;
     }
