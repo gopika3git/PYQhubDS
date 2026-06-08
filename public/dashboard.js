@@ -36,20 +36,40 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = '/index.html';
     });
 
-    // --- 4. INITIAL PYQ DATA FETCH ---
+    // --- 4. FILTER BUTTON INITIALIZATION ---
+    const searchBtn = document.getElementById('search-btn');
+    searchBtn.addEventListener('click', () => {
+        const subName = document.getElementById('filter-sub-name').value;
+        const subCode = document.getElementById('filter-sub-code').value;
+        const examType = document.getElementById('filter-type').value;
+        
+        // Pass selections into fetch pipeline
+        fetchPapers(subName, subCode, examType);
+    });
+
+    // --- 5. INITIAL PYQ DATA FETCH ---
     fetchPapers();
 });
 
-// Main layout structure to query your Render backend endpoints 
-// Updated structure to find out exactly why the backend is rejecting the request
-async function fetchPapers() {
+// Main layout structure to query your Render backend endpoints
+async function fetchPapers(subName = '', subCode = '', examType = '') {
     const grid = document.getElementById('papers-grid');
     try {
-        const response = await fetch('https://pyqhubds.onrender.com/api/papers', {
+        // Construct query parameters cleanly if filters are typed out
+        let queryUrl = 'https://pyqhubds.onrender.com/api/papers/all';
+        const params = new URLSearchParams();
+        if (subName) params.append('subjectName', subName);
+        if (subCode) params.append('subjectCode', subCode);
+        if (examType) params.append('examType', examType);
+        
+        if (params.toString()) {
+            queryUrl += `?${params.toString()}`;
+        }
+
+        const response = await fetch(queryUrl, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         
-        // Print the status code to see if it's a 401 (Unauthorized), 403 (Forbidden), or 404 (Not Found)
         console.log("Backend Response Status:", response.status);
         
         const papers = await response.json();
@@ -64,7 +84,7 @@ async function fetchPapers() {
                 </div>
             `).join('');
         } else {
-            grid.innerHTML = `<p class="no-data">No papers uploaded yet.</p>`;
+            grid.innerHTML = `<p class="no-data">No papers found matching your criteria.</p>`;
         }
     } catch (err) {
         console.error("Detailed Fetch Error:", err);
