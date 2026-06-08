@@ -57,7 +57,20 @@ function checkExistingAuth() {
 document.getElementById("register-btn").addEventListener("click", async () => {
     const name = document.getElementById("auth-name").value;
     const email = document.getElementById("auth-email").value;
-    const password = document.getElementById("auth-password").value;
+    const togglePassword = document.querySelector('#togglePassword');
+    const passwordInput = document.querySelector('#password');
+
+    if (togglePassword && passwordInput) {
+    togglePassword.addEventListener('click', function () {
+        // Toggle the type attribute
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // Toggle the eye / eye-slash icon
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+    }
     const role = "student"; 
 
     if (!name || !email || !password) {
@@ -132,7 +145,32 @@ function applyRoleBasedUI() {
         }
     });
 }
+const themeToggleBtn = document.querySelector('#themeToggle');
+const themeIcon = themeToggleBtn?.querySelector('i');
 
+// Check local storage for existing theme choice from previous visits
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme === 'light') {
+  document.body.classList.add('light-theme');
+  themeIcon.classList.replace('fa-moon', 'fa-sun');
+}
+
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light-theme');
+    
+    let theme = 'dark';
+    if (document.body.classList.contains('light-theme')) {
+      theme = 'light';
+      themeIcon.classList.replace('fa-moon', 'fa-sun');
+    } else {
+      themeIcon.classList.replace('fa-sun', 'fa-moon');
+    }
+    
+    // Save to localStorage so configuration state survives refreshes
+    localStorage.setItem('theme', theme);
+  });
+}
 // ==========================================
 // CORE UPLOAD ACTION
 // ==========================================
