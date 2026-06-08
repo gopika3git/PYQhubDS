@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PYQhubDS - Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <h1 class="logo" onclick="window.location.href='/index.html'">🎓 PYQhubDS</h1>
+        <div id="nav-actions">
+            <button id="theme-toggle-btn" class="theme-btn"><i class="fa-solid fa-moon"></i></button>
+        </div>
+    </header>
+
+    <main class="container auth-container">
+        <section class="card auth-card">
+            <h2>Create Account</h2>
+            <form id="register-form" class="form-group">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="reg-name" placeholder="Full Name (e.g., gopsss)" required>
+                </div>
+
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="reg-email" placeholder="Email Address" required>
+                </div>
+                
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="reg-password" placeholder="Password" required>
+                </div>
+
+                <input type="hidden" id="reg-role" value="student">
+                
+                <button type="submit" id="register-btn" class="btn">Sign Up</button>
+            </form>
+            
+            <p class="auth-redirect">Already have an account? <a href="index.html">Login here</a></p>
+        </section>
+    </main>
+
+    <script src="auth.js"></script>
+</body>
+</html>
