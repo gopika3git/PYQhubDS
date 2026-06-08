@@ -52,11 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Main layout structure to query your Render backend endpoints
-// Inside public/dashboard.js -> replace your fetchPapers function with this:
 async function fetchPapers(subName = '', subCode = '', examType = '') {
     const grid = document.getElementById('papers-grid');
     try {
-        // MATCHED ROUTE: changed from /all to /list
         let queryUrl = 'https://pyqhubds.onrender.com/api/papers/list';
         const params = new URLSearchParams();
         if (subName) params.append('subjectName', subName);
@@ -77,13 +75,23 @@ async function fetchPapers(subName = '', subCode = '', examType = '') {
         console.log("Data received from backend:", papers);
         
         if (response.ok && papers.length > 0) {
-            grid.innerHTML = papers.map(paper => `
-                <div class="paper-card card">
-                    <h3>${paper.subjectName}</h3>
-                    <p>Code: ${paper.subjectCode}</p>
-                    <span class="badge">${paper.examType}</span>
-                </div>
-            `).join('');
+            grid.innerHTML = papers.map(paper => {
+                // Safeguard lookup mapping your exact schema layout structure: paper.images[0].url
+                const fileLink = paper.images && paper.images.length > 0 && paper.images[0].url 
+                    ? paper.images[0].url 
+                    : '#';
+                
+                // Wrap the whole card block layout cleanly inside an anchor link component
+                return `
+                    <a href="${fileLink}" target="_blank" class="paper-card-link" style="text-decoration: none; color: inherit; display: block;">
+                        <div class="paper-card card" style="cursor: pointer;">
+                            <h3>${paper.subjectName}</h3>
+                            <p>Code: ${paper.subjectCode}</p>
+                            <span class="badge">${paper.examType}</span>
+                        </div>
+                    </a>
+                `;
+            }).join('');
         } else {
             grid.innerHTML = `<p class="no-data">No papers found matching your criteria.</p>`;
         }
