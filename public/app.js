@@ -145,32 +145,7 @@ function applyRoleBasedUI() {
         }
     });
 }
-const themeToggleBtn = document.querySelector('#themeToggle');
-const themeIcon = themeToggleBtn?.querySelector('i');
 
-// Check local storage for existing theme choice from previous visits
-const currentTheme = localStorage.getItem('theme');
-if (currentTheme === 'light') {
-  document.body.classList.add('light-theme');
-  themeIcon.classList.replace('fa-moon', 'fa-sun');
-}
-
-if (themeToggleBtn) {
-  themeToggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('light-theme');
-    
-    let theme = 'dark';
-    if (document.body.classList.contains('light-theme')) {
-      theme = 'light';
-      themeIcon.classList.replace('fa-moon', 'fa-sun');
-    } else {
-      themeIcon.classList.replace('fa-sun', 'fa-moon');
-    }
-    
-    // Save to localStorage so configuration state survives refreshes
-    localStorage.setItem('theme', theme);
-  });
-}
 // ==========================================
 // CORE UPLOAD ACTION
 // ==========================================
