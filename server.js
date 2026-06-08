@@ -33,22 +33,19 @@ const imagekit = new ImageKit({
 // Handshake endpoint mapped exactly to what app.js expects
 // ImageKit authentication handshake token route
 // ImageKit authentication handshake token route
+// Inside server.js
 app.get('/api/imagekit-auth', (req, res) => {
   try {
-      console.log("🔑 Frontend requested a secure ImageKit token signature...");
-      
-      const authParams = imagekit.getAuthenticationParameters();
-      
-      // 🛡️ Force explicit parameter mapping so the frontend never gets an "undefined" value
-      res.json({
-          signature: authParams.signature,
-          token: authParams.token,
-          expire: authParams.expire || authParams.expiry // <-- This fixes the version naming bug
-      });
-      
-  } catch (error) {
-      console.error("❌ ImageKit Handshake Failed:", error.message);
-      res.status(500).json({ error: "Failed to generate ImageKit auth parameters" });
+      // Force cross-origin headers so Vercel can safely talk to Render
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "X-Requested-With");
+
+      const result = imagekit.getAuthenticationParameters();
+      console.log("✅ ImageKit Auth Parameters Generated Successfully");
+      res.json(result);
+  } catch (err) {
+      console.error("❌ ImageKit Auth Generator Error:", err.message);
+      res.status(500).json({ error: "Failed to generate auth parameters", details: err.message });
   }
 });
 
