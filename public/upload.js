@@ -54,22 +54,19 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
         return;
     }
 
-    // COMPREHENSIVE SAFEST EXTRACTION FILTER FOR USER ID
+    // EXTRACTS ID FIELD MATCHING THE CONTROLLER PAYLOAD
     let uploadedBy = null;
     try {
         const parsedUser = JSON.parse(userRaw);
         if (parsedUser) {
-            // Checks Mongoose default _id first, then standard id, then secondary properties
-            uploadedBy = parsedUser._id || parsedUser.id || parsedUser.userId;
+            // 🔥 FIXED: Prioritizes user.id directly as sent by authController.js login return
+            uploadedBy = parsedUser.id || parsedUser._id; 
         }
     } catch (parseError) {
-        // Fallback case: If 'user' in local storage was saved directly as a raw ID string instead of JSON object
         uploadedBy = userRaw;
     }
 
-    // Ultimate fallback catch to prevent database validation errors
     if (!uploadedBy || uploadedBy === "null" || uploadedBy === "undefined") {
-        console.error("Authentication mapping failure. LocalStorage state:", userRaw);
         alert("Session validation failed: User identity key not found. Please log out and log back in.");
         return;
     }
@@ -114,7 +111,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
                 subjectCode, 
                 examType, 
                 images: uploadedImages,
-                uploadedBy: uploadedBy // Sent securely with sanitized variable mapping validation
+                uploadedBy: uploadedBy
             })
         });
 
