@@ -28,9 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- 2. IMAGEKIT INITIALIZATION ---
 const imagekit = new ImageKit({
-    publicKey: "public_0qoA3EltjzuJLUw80ihXx5hs8SQ=",
+    publicKey: "youpublic_0qoA3EltjzuJLUw80ihXx5h=",
     urlEndpoint: "https://ik.imagekit.io/goqp123",
-    authenticationEndpoint: "https://pyqhubds.onrender.com/api/imagekit-auth" // Points directly to endpoint in server.js
+    authenticationEndpoint: "https://pyqhubds.onrender.com/api/imagekit-auth"
 });
 
 // --- 3. UPLOAD AND MAPPING CONTROL ---
@@ -46,9 +46,19 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     const examType = document.getElementById('exam-type').value;
 
     const savedToken = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
 
     if (files.length === 0) {
-        alert("Select a PDF file to upload.");
+        alert("Please select a PDF file to upload.");
+        return;
+    }
+
+    // Grab user ID safely from the session storage object to satisfy schema validation
+    const uploadedBy = user ? (user.id || user._id) : null;
+
+    if (!uploadedBy) {
+        alert("Session error: User identity not found. Please log in again.");
+        window.location.href = '/index.html';
         return;
     }
 
@@ -87,7 +97,13 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${savedToken}`
             },
-            body: JSON.stringify({ subjectName, subjectCode, examType, images: uploadedImages })
+            body: JSON.stringify({ 
+                subjectName, 
+                subjectCode, 
+                examType, 
+                images: uploadedImages,
+                uploadedBy: uploadedBy // 🔥 FIXED: Sent user ID along to bypass database schema block
+            })
         });
 
         if (backendResponse.ok) {
