@@ -17,8 +17,9 @@ app.use((req, res, next) => {
     next();
 });
 
-const authRoutes = require('./routes/authRoutes');
-const paperRoutes = require('./routes/paperRoutes');
+const path = require('path');
+const authRoutes = require(path.resolve(__dirname, 'routes/authRoutes'));
+const paperRoutes = require(path.resolve(__dirname, 'routes/paperRoutes'));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/papers', paperRoutes);

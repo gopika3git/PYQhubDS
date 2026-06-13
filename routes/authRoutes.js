@@ -5,4 +5,10 @@ const authController = require('../controllers/authController');
 router.post('/register', authController.register);
 router.post('/login', authController.login);
 
-module.exports = router;
+module.exports = router; 
+
+// Safety: make it impossible for consumers to receive an undefined router.
+// (This should never trigger because router is always created above.)
+if (!router) {
+  throw new Error('authRoutes: router export is undefined');
+}
