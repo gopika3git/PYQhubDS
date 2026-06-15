@@ -24,6 +24,7 @@ const paperRoutes = require(path.resolve(__dirname, 'routes/paperRoutes'));
 app.use('/api/auth', authRoutes);
 app.use('/api/papers', paperRoutes);
 
+
 // ImageKit initialization mapping directly to your populated .env values
 const imagekit = new ImageKit({
     publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
