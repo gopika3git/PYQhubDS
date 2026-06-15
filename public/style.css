@@ -314,6 +314,39 @@ body {
   font-size: 1.1rem;
   margin-top: 40px;
 }
+/* ==========================================
+   AUTH PAGE LAYOUT (Welcome above Login)
+   ========================================== */
+
+/* This targets your <main class="auth-container"> */
+.auth-container {
+  display: flex;
+  flex-direction: column;   /* Forces elements to stack top-to-bottom */
+  align-items: center;      /* Centers everything horizontally */
+  justify-content: center;  /* Centers everything vertically on the screen */
+  min-height: 100vh;        /* Uses the full height of the browser screen */
+  gap: 32px;                /* Creates a perfect ~2cm gap between text and card */
+  padding: 20px;
+  background-color: #0d0d0d;
+  box-sizing: border-box;
+}
+
+/* This targets your <h1 id="newlyadded_title"> */
+#newlyadded_title {
+  text-align: center;
+  font-size: 2.5rem;        /* Keeps it large, bold, and readable */
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;                /* Removes default browser spacing conflicts */
+}
+
+/* This targets your <section class="card auth-card"> */
+.auth-card {
+  width: 100%;
+  max-width: 450px;         /* Keeps the login card box perfectly sized like your screenshot */
+  margin: 0;                /* Prevents any layout shifting */
+}
+
 /* --- UPLOAD CONTAINER TWEAKS --- */
 .upload-card {
   max-width: 500px;
