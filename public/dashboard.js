@@ -45,19 +45,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // Keep sample cards visible until the user clicks search.
   const grid = document.getElementById("papers-grid");
 
-
   let hasSearched = false;
 
   // Load 3 sample papers from DB and render them as clickable cards.
   loadSamplePapers();
-
 
   searchBtn.addEventListener("click", () => {
     hasSearched = true;
 
     // Replace sample cards with results area content
     if (grid) grid.innerHTML = "";
-
 
     const subName = document.getElementById("filter-sub-name").value;
     const subCode = document.getElementById("filter-sub-code").value;
@@ -79,7 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
-      if (!response.ok) throw new Error(`Failed to load samples (${response.status})`);
+      if (!response.ok)
+        throw new Error(`Failed to load samples (${response.status})`);
 
       const papers = await response.json();
       if (!Array.isArray(papers) || papers.length === 0) {
@@ -112,7 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
           const downloadUrl = `${backendBase}/papers/download/${paperId}`;
           try {
             const pdfResp = await fetch(downloadUrl, {
-              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
             });
 
             if (!pdfResp.ok) {
@@ -138,7 +138,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function fetchPapers({
-
     subName = "",
     subCode = "",
     examType = "",
