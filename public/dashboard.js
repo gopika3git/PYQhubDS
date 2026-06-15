@@ -48,6 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let hasSearched = false;
 
+  // Load 3 sample papers from DB and render them as clickable cards.
+  loadSamplePapers();
+
+
   searchBtn.addEventListener("click", () => {
     hasSearched = true;
 
@@ -63,7 +67,78 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Main layout structure to query your Render backend endpoints
+  async function loadSamplePapers() {
+    const sampleContainer = document.getElementById("sample-papers");
+    if (!sampleContainer) return;
+
+    try {
+      const backendBase = "https://pyqhubds.onrender.com/api";
+      // Fetch without filters, then show first 3.
+      // (Still faster than showing everything in the UI; list endpoint is already supported.)
+      const response = await fetch(`${backendBase}/papers/list`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
+      if (!response.ok) throw new Error(`Failed to load samples (${response.status})`);
+
+      const papers = await response.json();
+      if (!Array.isArray(papers) || papers.length === 0) {
+        sampleContainer.innerHTML = `<p class="no-data">No sample papers available yet.</p>`;
+        return;
+      }
+
+      const samplePapers = papers.slice(0, 3);
+      sampleContainer.innerHTML = samplePapers
+        .map(
+          (paper) => `
+          <a href="#" class="sample-paper-link" data-paper-id="${paper._id}" style="text-decoration:none;color:inherit;">
+            <div class="paper-card card" style="cursor:pointer;">
+              <h3>${paper.subjectName}</h3>
+              <p>Code: ${paper.subjectCode}</p>
+              <span class="badge">${paper.examType}</span>
+            </div>
+          </a>
+        `,
+        )
+        .join("");
+
+      sampleContainer.querySelectorAll(".sample-paper-link").forEach((a) => {
+        a.addEventListener("click", async (ev) => {
+          ev.preventDefault();
+
+          const paperId = a.getAttribute("data-paper-id");
+          if (!paperId) return;
+
+          const downloadUrl = `${backendBase}/papers/download/${paperId}`;
+          try {
+            const pdfResp = await fetch(downloadUrl, {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+
+            if (!pdfResp.ok) {
+              const txt = await pdfResp.text().catch(() => "");
+              throw new Error(`Download failed (${pdfResp.status}). ${txt}`);
+            }
+
+            const blob = await pdfResp.blob();
+            const objectUrl = URL.createObjectURL(blob);
+
+            window.open(objectUrl, "_blank", "noopener");
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
+          } catch (err) {
+            console.error("Sample PDF download/open error:", err);
+            alert("Failed to download the sample paper.");
+          }
+        });
+      });
+    } catch (err) {
+      console.error("loadSamplePapers error:", err);
+      // Don't wipe the UI if samples fail; just keep grid for search.
+    }
+  }
+
   async function fetchPapers({
+
     subName = "",
     subCode = "",
     examType = "",
