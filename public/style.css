@@ -209,48 +209,60 @@ body {
   gap: 25px;
 }
 
-/* Sample cards should appear below the title and in a row (wrap neatly) */
-#papers-grid .sample-papers {
+/* ==========================================
+   PARENT CONTAINER FIX (Breaks the split layout)
+   ========================================== */
+
+/* Force the main area to be a top-to-bottom stack, not a side-by-side grid */
+#papers-grid {
   display: flex;
-  flex-wrap: wrap;
-  gap: 24px; /* clear uniform gap */
-  justify-content: flex-start;
-  margin-top: 24px; /* vertical gap right below the title */
+  flex-direction: column;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-#papers-grid .sample-paper-link {
+/* Ensure your title and "(Click to download)" wrapper sit cleanly up top */
+#papers-grid .title-container, 
+#papers-grid h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 8px; /* Spacing before the cards start */
+}
+
+/* ==========================================
+   CARDS GRID FIX (Forces horizontal rows)
+   ========================================== */
+
+/* Sample cards will now appear directly below the title and span the whole width */
+#papers-grid .sample-papers,
+#papers-grid .filtered-papers-container { /* Adding standard container classes just in case */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 24px;         /* Clear, uniform gap between your cards */
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;       /* Spans across the full dark center workspace */
+  margin-top: 24px;  /* Leaves exactly ~2cm/24px space right below the title */
+}
+
+/* ==========================================
+   UNIFORM CARD SIZING (Kept exactly as you designed)
+   ========================================== */
+
+#papers-grid .sample-paper-link,
+#papers-grid .paper-card-link {
   display: block;
   text-decoration: none;
   color: inherit;
 }
 
-/* Make all sample cards the same uniform size */
-#papers-grid .sample-paper-link .paper-card {
-  width: 260px;
-  height: 170px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-/* Prevent text from stretching cards unevenly */
-#papers-grid .sample-paper-link .paper-card h3 {
-  font-size: 1.05rem;
-  margin-bottom: 8px;
-  line-height: 1.2;
-}
-
-#papers-grid .sample-paper-link .paper-card p {
-  margin-top: 0;
-  margin-bottom: 6px;
-}
-
-#papers-grid .sample-paper-link .paper-card .badge {
-  margin-top: auto;
-}
-
-/* Same uniform sizing for regular (filtered) paper cards too */
+/* Forces every single card to be the exact same size box */
+#papers-grid .sample-paper-link .paper-card,
 #papers-grid .paper-card-link .paper-card {
   width: 260px;
   height: 170px;
@@ -258,19 +270,26 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  box-sizing: border-box; /* Ensures padding doesn't alter card dimensions */
 }
 
+/* Prevent text lengths from stretching your uniform cards */
+#papers-grid .sample-paper-link .paper-card h3,
 #papers-grid .paper-card-link .paper-card h3 {
   font-size: 1.05rem;
+  margin-top: 0;
   margin-bottom: 8px;
   line-height: 1.2;
 }
 
+#papers-grid .sample-paper-link .paper-card p,
 #papers-grid .paper-card-link .paper-card p {
   margin-top: 0;
   margin-bottom: 6px;
 }
 
+/* Keeps the CAT-1/CAT-2 badges cleanly locked to the bottom corner */
+#papers-grid .sample-paper-link .paper-card .badge,
 #papers-grid .paper-card-link .paper-card .badge {
   margin-top: auto;
 }
