@@ -73,7 +73,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
 
     const file = files[0];
     submitBtn.disabled = true;
-    statusMsg.innerText = "Uploading PDF document to ImageKit...";
+    statusMsg.innerText = "Uploading PDF document...";
 
     try {
         const uploadedImages = [];
