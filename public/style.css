@@ -204,9 +204,51 @@ body {
 
 /* --- GRID DISPLAY --- */
 .grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 25px;
+  display: flex;
+  flex-direction: row;     /* Forces cards to go side-by-side */
+  flex-wrap: wrap;         /* Allows cards to wrap to the next row if they run out of space */
+  gap: 24px;               /* Clean, even spacing between cards */
+  justify-content: flex-start; /* Aligns them nicely starting from the left */
+  align-items: stretch;    /* Makes sure they keep matching heights */
+  width: 100%;             /* Spans across the full dark center frame */
+  margin-top: 24px;
+}
+
+/* Force the dynamic filtered links to block display */
+.grid-container a,
+.grid-container .paper-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Force your filtered paper cards to have the exact same uniform size as the sample ones */
+.grid-container .paper-card {
+  width: 260px !important;   /* Strict uniform width matching your white box drawing */
+  height: 170px !important;  /* Strict uniform height */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box;    /* Includes padding in width/height calculations */
+}
+
+/* Fix text spacing inside the filtered cards */
+.grid-container .paper-card h3 {
+  font-size: 1.05rem;
+  margin-top: 0;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.grid-container .paper-card p {
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+
+/* Keep the CAT badges fixed beautifully to the bottom corner */
+.grid-container .paper-card .badge {
+  margin-top: auto;
 }
 
 /* ==========================================
