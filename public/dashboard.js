@@ -164,21 +164,29 @@ document.addEventListener("DOMContentLoaded", () => {
       const papers = await response.json();
 
       if (response.ok && Array.isArray(papers) && papers.length > 0) {
-        grid.innerHTML = papers
+        // Build a flex-row wrapping container for filtered results.
+        // This prevents any accidental vertical stacking due to defaults/CSS.
+        grid.innerHTML = `<div id="filtered-papers" style="display:flex; flex-direction:row; flex-wrap:wrap; gap:24px; width:100%; justify-content:flex-start;"></div>`;
+
+        const filteredWrap = document.getElementById("filtered-papers");
+
+        const cardHTML = papers
           .map(
             (paper) => `
-                    <a href="#" target="_blank" class="paper-card-link" data-paper-id="${paper._id}" style="text-decoration: none; color: inherit; display: block;">
-                        <div class="paper-card card" style="cursor: pointer;">
-                            <h3>${paper.subjectName}</h3>
-                            <p>Code: ${paper.subjectCode}</p>
-                            <span class="badge">${paper.examType}</span>
-                        </div>
-                    </a>
-                `,
+              <a href="#" target="_blank" class="paper-card-link" data-paper-id="${paper._id}" style="text-decoration:none; color:inherit; display:block;">
+                <div class="paper-card card" style="cursor:pointer; width:260px; height:170px; box-sizing:border-box; display:flex; flex-direction:column;">
+                  <h3 style="font-size:1.05rem; margin-bottom:8px; line-height:1.2;">${paper.subjectName}</h3>
+                  <p style="margin:0 0 6px 0;">Code: ${paper.subjectCode}</p>
+                  <span class="badge" style="margin-top:auto;">${paper.examType}</span>
+                </div>
+              </a>
+            `,
           )
           .join("");
 
-        grid.querySelectorAll(".paper-card-link").forEach((a) => {
+        filteredWrap.innerHTML = cardHTML;
+
+        filteredWrap.querySelectorAll(".paper-card-link").forEach((a) => {
           a.addEventListener("click", async (ev) => {
             ev.preventDefault();
 
