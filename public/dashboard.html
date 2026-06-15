@@ -1,47 +1,84 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PYQhubDS - Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <header class="main-header">
-        <h1 class="logo" onclick="window.location.href='/dashboard.html'">🎓 PYQhubDS</h1>
-        <div id="nav-actions">
-            <button id="theme-toggle-btn" class="theme-btn">
-                <i class="fa-solid fa-moon"></i>
-            </button>
-            <span id="user-display">Welcome, Guest</span>
-            
-            <button id="nav-upload-btn" class="btn action-btn" onclick="window.location.href='/upload.html'">📤 Upload PYQ</button>
-            <button id="logout-btn" class="btn logout-btn">Logout</button>
-        </div>
+      <h1 class="logo" onclick="window.location.href = '/dashboard.html'">
+        🎓 PYQhubDS
+      </h1>
+      <div id="nav-actions">
+        <button id="theme-toggle-btn" class="theme-btn">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <span id="user-display">Welcome, Guest</span>
+
+        <button
+          id="nav-upload-btn"
+          class="btn action-btn"
+          onclick="window.location.href = '/upload.html'"
+        >
+          📤 Upload PYQ
+        </button>
+        <button id="logout-btn" class="btn logout-btn">Logout</button>
+      </div>
     </header>
 
     <main class="container dashboard-container">
-        <section id="filter-section" class="center-search">
-            <h2>🔍 Find Past Papers</h2>
-            <div class="filter-inputs-container">
-                <input type="text" id="filter-sub-name" placeholder="Search by Subject Name">
-                <input type="text" id="filter-sub-code" placeholder="Search by Subject Code (e.g. CSE3002)">
-                <select id="filter-type">
-                    <option value="">All Exam Types</option>
-                    <option value="CAT-1">CAT-1</option>
-                    <option value="CAT-2">CAT-2</option>
-                    <option value="FAT">FAT</option>
-                </select>
-                <button id="search-btn" class="btn search-btn">Filter Papers</button>
-            </div>
-        </section>
+      <section id="filter-section" class="center-search">
+        <h2>🔍 Find Past Papers</h2>
+        <div class="filter-inputs-container">
+          <input
+            type="text"
+            id="filter-sub-name"
+            placeholder="Search by Subject Name"
+          />
+          <input
+            type="text"
+            id="filter-sub-code"
+            placeholder="Search by Subject Code (e.g. CSE3002)"
+          />
+          <select id="filter-type">
+            <option value="">All Exam Types</option>
+            <option value="CAT-1">CAT-1</option>
+            <option value="CAT-2">CAT-2</option>
+            <option value="FAT">FAT</option>
+          </select>
+          <button id="search-btn" class="btn search-btn">Filter Papers</button>
+        </div>
+      </section>
 
-        <section id="papers-grid" class="grid-container">
-            </section>
+      <section id="papers-grid" class="grid-container">
+        <h2 class="sample-title">📘 Sample Question Papers</h2>
+
+        <div class="paper-card card">
+          <h3>Mathematics</h3>
+          <p>Code: MTH101</p>
+          <span class="badge">CAT-1</span>
+        </div>
+
+        <div class="paper-card card">
+          <h3>Physics</h3>
+          <p>Code: PHY102</p>
+          <span class="badge">CAT-2</span>
+        </div>
+
+        <div class="paper-card card">
+          <h3>Computer Science</h3>
+          <p>Code: CSE3002</p>
+          <span class="badge">FAT</span>
+        </div>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
-</body>
+  </body>
 </html>
