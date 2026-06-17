@@ -330,6 +330,63 @@ body {
   margin-bottom: 6px;
 }
 
+/* Disclaimer Banner Styles */
+.disclaimer-banner {
+  position: fixed;
+  top: -100px; /* Hidden off-screen initially */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 800px;
+  background: rgba(30, 30, 40, 0.85); /* Dark translucent background */
+  backdrop-filter: blur(10px); /* Premium glassmorphism effect */
+  border: 1px solid rgba(187, 134, 252, 0.3); /* Subtle neon purple border */
+  border-radius: 12px;
+  padding: 15px 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 9999; /* Stays on top of everything */
+  transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Smooth bounce entry */
+}
+
+/* Slide down trigger */
+.disclaimer-banner.show {
+  top: 20px;
+}
+
+.disclaimer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.disclaimer-content p {
+  color: #e0e0e0;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  font-family: sans-serif;
+}
+
+.disclaimer-content strong {
+  color: #bb86fc; /* Purple accent for your name */
+}
+
+.close-banner-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 5px;
+  transition: color 0.2s ease;
+}
+
+.close-banner-btn:hover {
+  color: #ff5555; /* Turns red when hovered */
+}
+
 /* Keeps the CAT-1/CAT-2 badges cleanly locked to the bottom corner */
 #papers-grid .sample-paper-link .paper-card .badge,
 #papers-grid .paper-card-link .paper-card .badge {
