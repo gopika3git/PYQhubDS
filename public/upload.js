@@ -97,7 +97,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
             thumbnailUrl: "https://ik.imagekit.io/goqp123/default-pdf-icon.png"
         });
 
-        statusMsg.innerText = "Saving data to MongoDB database...";
+        statusMsg.innerText = "Saving data...";
 
         // Send final bundle payload down to Render with explicit Bearer token header syntax
         const backendResponse = await fetch('https://pyqhubds.onrender.com/api/papers/upload', { 
