@@ -40,29 +40,36 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        // 1. Air-tight VIT Extension Email Check
         if (!isAllowedVITEmail(email)) {
-            return res.status(403).json({ message: DISCLAIMER });
+            return res.status(403).json({ 
+                message: "Hol' up... ✋ This portal runs strictly on Chittoor road energy. Elites are studying here, aap tab tak jaake Nescafe ka juice enjoy karo! 🍹🤫" 
+            });
         }
 
-        // Find user by email
-        const user = await User.findOne({ email });
+        // 2. Fast Database Lookup (Ensure 'email' is indexed in your User Model)
+        const user = await User.findOne({ email }).select('+password'); 
+        
+        // 3. Credential Verification (Using plain text matching as per your current setup)
+        // Note: If you migrate to bcrypt later, change this to: await bcrypt.compare(password, user.password)
         if (!user || user.password !== password) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // Generate a secure JWT Token containing user ID and role
+        // 4. Generate a secure JWT Token
         const token = jwt.sign(
             { id: user._id, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
 
-        // Send token and user details back to frontend
-        res.json({
+        // 5. Instantly send response back to frontend
+        return res.json({
             token,
             user: { id: user._id, name: user.name, role: user.role }
         });
+
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
     }
 };

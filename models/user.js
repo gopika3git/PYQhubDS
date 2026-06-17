@@ -8,8 +8,9 @@ const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true // Prevents duplicate registrations
-  },
+    unique: true,
+    index: true // <-- THIS stops the database from lagging during lookups!
+  },  
   password: {
     type: String,
     required: true
