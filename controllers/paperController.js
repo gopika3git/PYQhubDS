@@ -25,7 +25,7 @@ exports.uploadPaper = async (req, res) => {
             uploadedBy: uploadedBy || null
         });
 
-        console.log("💾 Writing document to MongoDB Atlas...");
+        console.log("💾 Writing document...");
         await newPaper.save();
 
         console.log("✅ SUCCESS: Saved to database!");
