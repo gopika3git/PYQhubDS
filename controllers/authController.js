@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const ALLOWED_EMAIL_SUFFIXES = ['@vitstudent.ac.in', '@vit.ac.in'];
 
-const DISCLAIMER = "Hol' up... ✋ This portal runs strictly on Chittoor road energy, VITians ONLY!!! Elites are studying here, agle saal milte hai! 🤝";
+const DISCLAIMER = "Hol' up... ✋ This portal runs strictly on Chittoor road energy, VITians ONLY!!! Elites are studying here, agle saal phir aanaa! 🤝";
 
 function isAllowedVITEmail(email) {
     if (!email || typeof email !== 'string') return false;
