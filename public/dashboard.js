@@ -9,28 +9,28 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- Gopika's Disclaimer Banner Logic ---
-document.addEventListener("DOMContentLoaded", () => {
-  const banner = document.getElementById("gopika-disclaimer");
-  const closeBtn = document.getElementById("close-disclaimer");
+  document.addEventListener("DOMContentLoaded", () => {
+    const banner = document.getElementById("gopika-disclaimer");
+    const closeBtn = document.getElementById("close-disclaimer");
 
-  if (banner && closeBtn) {
-      // 1. Smoothly slide the banner down 1 second after dashboard loads
-      setTimeout(() => {
-          banner.classList.add("show");
-      }, 1000);
+    if (banner && closeBtn) {
+        // 1. Smoothly slide the banner down 1 second after dashboard loads
+        setTimeout(() => {
+            banner.classList.add("show");
+        }, 1000);
 
-      // Function to hide the banner smoothly
-      const hideBanner = () => {
-          banner.classList.remove("show");
-      };
+        // Function to hide the banner smoothly
+        const hideBanner = () => {
+            banner.classList.remove("show");
+        };
 
-      // 2. Close it when the student clicks the 'X' button
-      closeBtn.addEventListener("click", hideBanner);
+        // 2. Close it when the student clicks the 'X' button
+        closeBtn.addEventListener("click", hideBanner);
 
-      // 3. Automatically close it after 15 seconds (15000 milliseconds)
-      setTimeout(hideBanner, 15000);
-  }
-});
+        // 3. Automatically close it after 15 seconds (15000 milliseconds)
+        setTimeout(hideBanner, 15000);
+    }
+  });
   
   
   // Populate user greeting banner dynamically
