@@ -510,8 +510,8 @@ body {
 
 /* Logo Image constraints */
 .nav-logo {
-  height:120px; /* Perfectly scales the logo to fit standard navbar heights */
-  width: 120px;
+  height:180px; /* Perfectly scales the logo to fit standard navbar heights */
+  width: 180px;
   object-fit: contain;
 }
 
