@@ -64,6 +64,9 @@ if (loginBtn) {
                 window.location.href = '/dashboard.html';
             } else {
                 alert(data.message || "Authentication failed");
+                if (response.status === 403) {
+                    window.location.href = '/register.html';
+                }
             }
         } catch (err) {
             console.error("Login error:", err);
@@ -104,6 +107,9 @@ if (registerBtn) {
                 window.location.href = '/index.html'; 
             } else {
                 alert(data.message || data.error || "Registration failed.");
+                if (response.status === 403) {
+                    window.location.href = '/register.html';
+                }
             }
         } catch (err) {
             console.error("Registration error:", err);

@@ -1,10 +1,24 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
+const ALLOWED_EMAIL_SUFFIXES = ['@vitstudent.ac.in', '@vit.ac.in'];
+
+const DISCLAIMER = "Hol' up... ✋ This portal runs strictly on Chittoor road energy, VITians ONLY!!! Elites are studying here, agle saal milte hai! 🤝";
+
+function isAllowedVITEmail(email) {
+    if (!email || typeof email !== 'string') return false;
+    const normalized = email.trim().toLowerCase();
+    return ALLOWED_EMAIL_SUFFIXES.some((suffix) => normalized.endsWith(suffix));
+}
+
 // 1. REGISTER A NEW USER
 exports.register = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
+
+        if (!isAllowedVITEmail(email)) {
+            return res.status(403).json({ message: DISCLAIMER });
+        }
 
         // Check if the user already exists
         let user = await User.findOne({ email });
@@ -25,6 +39,10 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
+
+        if (!isAllowedVITEmail(email)) {
+            return res.status(403).json({ message: DISCLAIMER });
+        }
 
         // Find user by email
         const user = await User.findOne({ email });
