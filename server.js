@@ -103,7 +103,7 @@ const computeGoogleCallbackURL = () => {
   const isProd = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
 
   if (isProd) {
-    return 'https://pyqhudbs.vercel.app/api/auth/google/callback';
+    return 'https://pyqhubds.vercel.app/api/auth/google/callback';
   }
 
   const port = process.env.PORT || '5001';
