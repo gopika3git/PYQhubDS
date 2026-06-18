@@ -1,22 +1,32 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/**/*",
+      "use": "@vercel/static"
+    }
+  ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "server.js"
+      "src": "/auth/(.*)",
+      "dest": "index.js"
+    },
+    {
+      "src": "/(index.html)?",
+      "dest": "/public/index.html"
     },
     {
       "src": "/(.*)",
-      "dest": "public/$1",
-      "continue": true
-    }
-  ],
-  "cleanUrls": true,
-  "crons": [
+      "dest": "/public/$1",
+      "check": true
+    },
     {
-      "path": "/",
-      "schedule": "*/5 * * * *"
+      "src": "/(.*)",
+      "dest": "index.js"
     }
   ]
 }
-
