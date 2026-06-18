@@ -43,7 +43,7 @@ exports.login = async (req, res) => {
         // 1. Air-tight VIT Extension Email Check
         if (!isAllowedVITEmail(email)) {
             return res.status(403).json({ 
-                message: "Hol' up... ✋ This portal runs strictly on Chittoor road energy. Elites are studying here, aap tab tak jaake Nescafe ka juice enjoy karo! 🍹🤫" 
+                message: "Hol' up... ✋ This portal runs strictly on Chittoor road energy, VITians ONLY!!! Elites are studying here, agle saal phir aanaa! 🤝"
             });
         }
 
