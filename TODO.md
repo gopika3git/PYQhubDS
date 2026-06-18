@@ -1,13 +1,12 @@
-# TODO - PYQ-HUB Google OAuth Migration
+# TODO - Auth Fix (email-only)
 
-- [ ] Install dependencies for Passport + Google OAuth + sessions
-- [ ] Update `models/user.js` to store googleId, displayName, email, profilePicture
-- [ ] Update `server.js`:
-  - [ ] Configure express-session
-  - [ ] Configure Passport GoogleStrategy using env vars
-  - [ ] Add routes: `/auth/google`, `/auth/google/callback`, `/logout`
-  - [ ] Add `isLoggedIn` middleware
-  - [ ] Apply `isLoggedIn` to `GET /dashboard`
-- [ ] (Optional) Remove/ignore old JWT-based auth usage for dashboard
-- [ ] Start server and test OAuth success/failure + restricted domain enforcement
+- [x] Remove username/password/email fields from register UI (hide or delete register.html, and remove any register button usage).
+- [x] Remove `register` and password logic in backend controllers/routes.
+- [ ] Update `models/user.js` to keep only email (and optional displayName) consistent with email-only login.
+- [ ] Implement email-only login endpoint.
+- [x] Update `public/index.html` and `public/auth.js` to perform email-only login request.
+- [x] Ensure `/dashboard` protection matches the new auth mechanism.
+- [ ] Run server and test: login -> redirect to /dashboard.
+
+
 

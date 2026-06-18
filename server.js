@@ -67,6 +67,18 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
+// Middleware to ensure email-only login also marks session as authenticated
+// (used by our /api/auth/login endpoint)
+app.use((req, _res, next) => {
+  if (!req.session) return next();
+  if (req.session.userId) {
+    req.user = req.session.userId;
+    req.isAuthenticated = req.isAuthenticated || (() => true);
+  }
+  next();
+});
+
+
 // =========================
 // ✅ NEW: Passport GoogleStrategy (PLACE after passport session setup)
 // =========================

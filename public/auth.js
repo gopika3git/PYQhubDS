@@ -1,6 +1,4 @@
-// --- AUTH.JS (Google OAuth ONLY)
-// Login page now contains ONLY a “Sign in with Google” button.
-// This script only keeps the optional dark/light theme toggle if present.
+// AUTH.JS (Email-only login)
 
 // --- 1. DARK / LIGHT THEME TOGGLE ---
 const themeToggleBtn = document.getElementById('theme-toggle-btn');
@@ -26,5 +24,42 @@ if (themeToggleBtn) {
     localStorage.setItem('theme', isLight ? 'light' : 'dark');
   });
 }
+
+// --- 2. EMAIL-ONLY LOGIN (validate email exists and allow session) ---
+const loginForm = document.getElementById('login-form');
+const loginEmailInput = document.getElementById('login-email');
+const loginStatus = document.getElementById('login-status');
+
+if (loginForm) {
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = loginEmailInput.value.trim();
+    loginStatus.textContent = 'Verifying...';
+
+    try {
+      const resp = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await resp.json().catch(() => ({}));
+
+      if (!resp.ok) {
+        loginStatus.textContent = data?.message || 'Login failed';
+        return;
+      }
+
+      // Server returns { token, user } for JWT flows.
+      // For this app, we'll simply redirect if successful.
+      window.location.href = '/dashboard';
+    } catch (err) {
+      loginStatus.textContent = 'Network error';
+      console.error(err);
+    }
+  });
+}
+
 
 

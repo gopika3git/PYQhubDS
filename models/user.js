@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 
+// Email-only login model (no username/password fields)
 const UserSchema = new mongoose.Schema(
   {
-    googleId: {
+    email: {
       type: String,
       required: true,
       unique: true,
@@ -10,11 +11,12 @@ const UserSchema = new mongoose.Schema(
     },
     displayName: {
       type: String,
-      required: true,
+      default: '',
     },
-    email: {
+    // Keep for backward compatibility (older Google/OAuth users may exist)
+    googleId: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
       index: true,
     },
@@ -29,4 +31,5 @@ const UserSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model('User', UserSchema);
+
 
