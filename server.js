@@ -84,20 +84,51 @@ app.use((req, _res, next) => {
 // =========================
 const ALLOWED_EMAIL_SUFFIXES = ['@vitstudent.ac.in', '@vit.ac.in'];
 
+/**
+ * IMPORTANT FOR GOOGLE:
+ * callbackURL must be an EXACT absolute URL that you added in Google Cloud Console.
+ *
+ * Your Express mount:
+ *   app.use('/api/auth', authRoutes)
+ * and routes/authRoutes.js defines:
+ *   router.get('/google/callback', authController.googleCallback)
+ *
+ * Therefore the actual callback endpoint is:
+ *   /api/auth/google/callback
+ */
+const computeGoogleCallbackURL = () => {
+  const callbackFromEnv = process.env.GOOGLE_CALLBACK_URL;
+  if (callbackFromEnv) return callbackFromEnv;
+
+  const isProd = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+
+  if (isProd) {
+    return 'https://pyqhudbs.vercel.app/api/auth/google/callback';
+  }
+
+  const port = process.env.PORT || '5001';
+  return `http://localhost:${port}/api/auth/google/callback`;
+};
+
+const GOOGLE_CALLBACK_URL = computeGoogleCallbackURL();
+console.log('✅ Using GOOGLE_CALLBACK_URL:', GOOGLE_CALLBACK_URL);
+
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || '/auth/google/callback',
+      callbackURL: GOOGLE_CALLBACK_URL,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Extract email from profile.emails[0].value
         const email = profile?.emails?.[0]?.value;
 
-        const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
-        const isAllowed = ALLOWED_EMAIL_SUFFIXES.some((suffix) => normalizedEmail.endsWith(suffix));
+        const normalizedEmail =
+          typeof email === 'string' ? email.trim().toLowerCase() : '';
+        const isAllowed = ALLOWED_EMAIL_SUFFIXES.some((suffix) =>
+          normalizedEmail.endsWith(suffix)
+        );
 
         if (!isAllowed) {
           return done(null, false, {
@@ -109,7 +140,6 @@ passport.use(
         const googleId = profile.id;
         const profilePicture = profile?.photos?.[0]?.value || '';
 
-        // Find or create the user document
         let user = await User.findOne({ email });
         if (!user) {
           user = await User.create({
@@ -119,7 +149,6 @@ passport.use(
             profilePicture,
           });
         } else {
-          // Keep data fresh if user exists
           user.googleId = user.googleId || googleId;
           user.displayName = displayName;
           user.profilePicture = profilePicture;
@@ -133,6 +162,7 @@ passport.use(
     }
   )
 );
+
 
 // =========================
 // ✅ NEW: EXPRESS AUTH ROUTES (PLACE after strategy registration)
