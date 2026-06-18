@@ -1,12 +1,10 @@
-# TODO - Auth Fix (email-only)
+# TODO - Google OAuth-only cleanup
 
-- [x] Remove username/password/email fields from register UI (hide or delete register.html, and remove any register button usage).
-- [x] Remove `register` and password logic in backend controllers/routes.
-- [ ] Update `models/user.js` to keep only email (and optional displayName) consistent with email-only login.
-- [ ] Implement email-only login endpoint.
-- [x] Update `public/index.html` and `public/auth.js` to perform email-only login request.
-- [x] Ensure `/dashboard` protection matches the new auth mechanism.
-- [ ] Run server and test: login -> redirect to /dashboard.
-
+- [x] Update `public/index.html` to Google-only button.
+- [x] Rewrite `models/user.js` to Google-only fields.
+- [x] Rewrite `controllers/authController.js` to remove legacy email/password and only expose Google OAuth handlers.
+- [x] Update `routes/authRoutes.js` to `/google`, `/google/callback`, `/logout`.
+- [ ] Ensure `server.js` has Passport GoogleStrategy with strict domain validation.
+- [x] Ensure frontend href matches server route mounting (`/api/auth/google` if mounted at `/api/auth`).
 
 
