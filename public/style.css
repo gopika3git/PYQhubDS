@@ -423,11 +423,21 @@ body {
   flex-direction: column;   /* Forces elements to stack top-to-bottom */
   align-items: center;      /* Centers everything horizontally */
   justify-content: center;  /* Centers everything vertically on the screen */
-  min-height: 100vh;        /* Uses the full height of the browser screen */
-  gap: 32px;                /* Creates a perfect ~2cm gap between text and card */
+  flex: 1;                  /* CHANGE: Allows it to scale naturally inside .auth-body */
+  gap: 12px;                /* FIX: Reduced from 32px to bring the text and card closer */
   padding: 20px;
   background-color: #0d0d0d;
   box-sizing: border-box;
+}
+
+/* This targets your <h1 id="newlyadded_title"> */
+#newlyadded_title {
+  text-align: center;
+  font-size: 2.5rem;        /* Keeps it large, bold, and readable */
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;                /* Removes default browser spacing conflicts */
+  margin-top: -40px;        /* OPTIONAL: Pulls the title up a bit higher away from the card */
 }
 
 /* This targets your <h1 id="newlyadded_title"> */
