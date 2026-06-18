@@ -19,24 +19,20 @@
 
     <main class="auth-container">
         <h1 id="newlyadded_title">Welcome to PYQhubDS!</h1>
+
         <section class="card auth-card">
-            <h2>Sign in</h2>
+            <h2>Sign in with Google</h2>
             <p style="margin-bottom:20px; opacity:0.9;">
               Use your VIT student Google account to continue.
             </p>
 
-            <form id="login-form" class="form-group" style="margin-top:16px;">
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-envelope"></i>
-                    <input type="email" id="login-email" placeholder="VIT Email" required />
-                </div>
+            <a class="btn" style="display:inline-block; text-align:center; text-decoration:none;" href="/auth/google">
+              <i class="fa-brands fa-google" style="margin-right:10px;"></i>
+              Sign in with Google
+            </a>
 
-                <button type="submit" id="login-btn" class="btn" style="margin-top:14px;">Send Sign-in Link</button>
-                <p id="login-status" class="auth-redirect" style="margin-top:12px; opacity:0.9;"></p>
-            </form>
-
-            <p class="auth-redirect" style="margin-top:14px;">
-              Use your VIT student email. (This flow currently validates that the email exists.)
+            <p class="auth-redirect" style="margin-top:14px; opacity:0.9;">
+              Access is restricted to VIT student emails.
             </p>
         </section>
     </main>
