@@ -1,7 +1,13 @@
-- [x] Make dashboard not fetch/show all papers on load
-- [ ] Ensure dashboard shows only empty grid until user clicks “Filter Papers”
-- [ ] Keep search functionality (subject name/code + exam type dropdown)
-- [ ] Display “No papers found…” only after a search is performed
-- [ ] Verify paper list endpoint is called only on search
+# TODO - PYQ-HUB Google OAuth Migration
 
+- [ ] Install dependencies for Passport + Google OAuth + sessions
+- [ ] Update `models/user.js` to store googleId, displayName, email, profilePicture
+- [ ] Update `server.js`:
+  - [ ] Configure express-session
+  - [ ] Configure Passport GoogleStrategy using env vars
+  - [ ] Add routes: `/auth/google`, `/auth/google/callback`, `/logout`
+  - [ ] Add `isLoggedIn` middleware
+  - [ ] Apply `isLoggedIn` to `GET /dashboard`
+- [ ] (Optional) Remove/ignore old JWT-based auth usage for dashboard
+- [ ] Start server and test OAuth success/failure + restricted domain enforcement
 
