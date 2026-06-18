@@ -70,6 +70,9 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is blasting off on port ${PORT}`);
-});
+// At the bottom of server.js, change your listen block to this:
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(5000, () => console.log('Server running locally'));
+}
+
+export default app; // CRITICAL FOR VERCEL
