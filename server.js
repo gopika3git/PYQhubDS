@@ -22,6 +22,7 @@ const paperRoutes = require(path.resolve(__dirname, 'routes/paperRoutes'));
 
 app.use('/api/papers', paperRoutes);
 
+// (Auth routes removed: login/signup no longer available)
 
 
 // ImageKit initialization mapping directly to your populated .env values

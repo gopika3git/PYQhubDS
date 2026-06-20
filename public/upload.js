@@ -1,30 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // --- 1. SESSION GUARD ---
-    const token = localStorage.getItem('token');
-    const userRaw = localStorage.getItem('user');
-    
-    if (!token || !userRaw) {
-        window.location.href = '/dashboard.html';
-        return;
-    }
-
     // Theme Persistent Settings
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');
-    themeToggleBtn.addEventListener('click', () => {
-        document.body.classList.toggle('light-theme');
-        localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
-    });
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+        });
+    }
 
     // Update chosen file name display
     const fileInput = document.getElementById('file-input');
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files.length > 0) {
-            document.getElementById('file-count').innerText = fileInput.files[0].name;
-        } else {
-            document.getElementById('file-count').innerText = "No file selected";
-        }
-    });
+    if (fileInput) {
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                document.getElementById('file-count').innerText = fileInput.files[0].name;
+            } else {
+                document.getElementById('file-count').innerText = "No file selected";
+            }
+        });
+    }
 });
 
 // --- 2. IMAGEKIT INITIALIZATION ---
@@ -35,7 +30,9 @@ const imagekit = new ImageKit({
 });
 
 // --- 3. UPLOAD AND MAPPING CONTROL ---
-document.getElementById('upload-form').addEventListener('submit', async (e) => {
+const uploadForm = document.getElementById('upload-form');
+
+uploadForm && uploadForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const statusMsg = document.getElementById('upload-status');
     const submitBtn = document.getElementById('submit-upload-btn');
@@ -46,30 +43,16 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     const subjectCode = document.getElementById('sub-code').value;
     const examType = document.getElementById('exam-type').value;
 
-    const savedToken = localStorage.getItem('token');
-    const userRaw = localStorage.getItem('user');
+
 
     if (files.length === 0) {
         alert("Please select a PDF file to upload.");
         return;
     }
 
-    // EXTRACTS ID FIELD MATCHING THE CONTROLLER PAYLOAD
-    let uploadedBy = null;
-    try {
-        const parsedUser = JSON.parse(userRaw);
-        if (parsedUser) {
-            // 🔥 FIXED: Prioritizes user.id directly as sent by authController.js login return
-            uploadedBy = parsedUser.id || parsedUser._id; 
-        }
-    } catch (parseError) {
-        uploadedBy = userRaw;
-    }
-
-    if (!uploadedBy || uploadedBy === "null" || uploadedBy === "undefined") {
-        alert("Session validation failed: User identity key not found. Please log out and log back in.");
-        return;
-    }
+    // No-auth mode: uploadedBy is optional for this controller.
+    // Keep it null to avoid depending on localStorage token/user.
+    const uploadedBy = null;
 
     const file = files[0];
     submitBtn.disabled = true;
@@ -99,19 +82,18 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
 
         statusMsg.innerText = "Saving data...";
 
-        // Send final bundle payload down to Render with explicit Bearer token header syntax
+        // Send final bundle payload down to Render (no auth required)
         const backendResponse = await fetch('https://pyqhubds.onrender.com/api/papers/upload', { 
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${savedToken}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({ 
                 subjectName, 
                 subjectCode, 
                 examType, 
                 images: uploadedImages,
-                uploadedBy: uploadedBy
+                uploadedBy
             })
         });
 
