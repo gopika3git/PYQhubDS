@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const userRaw = localStorage.getItem('user');
     
     if (!token || !userRaw) {
-        window.location.href = '/index.html';
+        window.location.href = '/dashboard.html';
         return;
     }
 

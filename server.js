@@ -18,11 +18,10 @@ app.use((req, res, next) => {
 });
 
 const path = require('path');
-const authRoutes = require(path.resolve(__dirname, 'routes/authRoutes'));
 const paperRoutes = require(path.resolve(__dirname, 'routes/paperRoutes'));
 
-app.use('/api/auth', authRoutes);
 app.use('/api/papers', paperRoutes);
+
 
 
 // ImageKit initialization mapping directly to your populated .env values
@@ -58,8 +57,9 @@ mongoose.connect(process.env.MONGO_URL)
   .catch(err => console.error("❌ Database connection error:", err));
 
 app.get('/', (req, res) => {
-  res.send('Your PYQ Platform Backend is officially running with ImageKit!');
+  res.redirect('/dashboard.html');
 });
+
 
 app.use((err, req, res, next) => {
     console.error("🔴 GLOBAL BACKEND FAULT DETECTED:", err.stack);

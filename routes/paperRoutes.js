@@ -2,20 +2,20 @@ const express = require('express');
 const router = express.Router();
 const paperController = require('../controllers/paperController');
 
-// Import authentication & authorization middleware functions
-const { authenticateUser, authorizeRoles } = require('../middleware/authMiddleware');
+
 
 // 1. VIEW PAPERS: Anyone can see the list of papers
 router.get('/list', paperController.getPapers);
 
-// 2. UPLOAD PAPERS: Must be logged in, and can be a student OR an admin
-router.post('/upload', authenticateUser, authorizeRoles('student', 'admin'), paperController.uploadPaper);
+// 2. UPLOAD PAPERS: Public (no login required)
+router.post('/upload', paperController.uploadPaper);
 
-// 3. DELETE PAPERS: Must be logged in, and ONLY an admin can do it
-router.delete('/:id', authenticateUser, authorizeRoles('admin'), paperController.deletePaper);
+// 3. DELETE PAPERS: Disabled in no-auth mode
+router.delete('/:id', (req, res) => res.status(403).json({ error: 'Deletion disabled in no-auth mode.' }));
 
-// Download proxy: returns the original PDF file (proxied through this backend)
-router.get('/download/:id', authenticateUser, paperController.downloadPaper);
+// Download proxy: Public (no login required)
+router.get('/download/:id', paperController.downloadPaper);
+
 
 module.exports = router;
 
