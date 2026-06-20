@@ -5,6 +5,8 @@ exports.googleAuth = (req, res, next) => {
   passport.authenticate('google', {
     scope: ['profile', 'email'],
     prompt: 'select_account',
+    // IMPORTANT: disable session on initial auth too
+    session: false,
   })(req, res, next);
 };
 
@@ -12,7 +14,8 @@ exports.googleAuth = (req, res, next) => {
 exports.googleCallback = (req, res, next) => {
   passport.authenticate('google', {
     failureRedirect: '/login',
-    session: true,
+    // IMPORTANT: disable passport session handling (serverless/stateless)
+    session: false,
   })(req, res, next);
 };
 
