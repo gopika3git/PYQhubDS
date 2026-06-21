@@ -1,0 +1,6 @@
+Auth removal checklist executed.
+- Removed frontend auth files: public/index.html, public/register.html, public/auth.js
+- Removed backend auth wiring: routes/authRoutes.js, controllers/authController.js
+- Made upload public: public/upload.js no session guard, no Authorization header, uploadedBy null
+- Dashboard disclaimer preserved in public/dashboard.html
+
