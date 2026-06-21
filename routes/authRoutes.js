@@ -1,20 +1,19 @@
+const express = require('express');
+const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
 // 1. Initiates the Google OAuth Flow
-exports.googleAuth = (req, res, next) => {
-  // Use the same stateless callbackURL handler; avoid any session usage.
+router.get('/google', (req, res, next) => {
   passport.authenticate('google', {
     scope: ['profile', 'email'],
     hd: 'vitstudent.ac.in',
     session: false,
   })(req, res, next);
-};
+});
 
-// 2. Handles the incoming redirect payload from Google (STATeless)
-// IMPORTANT: Do NOT use req.login (passport default) in stateless mode.
-// We use a custom callback so Passport does NOT call req.login.
-exports.googleCallback = (req, res, next) => {
+// 2. Handles the incoming redirect payload from Google
+router.get('/google/callback', (req, res, next) => {
   passport.authenticate('google', {
     session: false,
     failureRedirect: '/login',
@@ -60,10 +59,13 @@ exports.googleCallback = (req, res, next) => {
       });
     }
   })(req, res, next);
-};
+});
 
 // 3. Simple Stateless Logout
-exports.logout = (req, res) => {
+router.get('/logout', (req, res) => {
   res.clearCookie('token');
   return res.redirect('/index.html');
-};
+});
+
+// CRITICAL: Export the router so server.js can use it
+module.exports = router;

@@ -6,7 +6,27 @@ const ImageKit = require('imagekit');
 const path = require('path');
 
 const paperRoutes = require(path.resolve(__dirname, 'routes/paperRoutes'));
+// ... Your other imports ...
+// 1. ADD THIS IMPORT FOR AUTH ROUTES:
+const authRoutes = require(path.resolve(__dirname, 'routes/authRoutes')); 
 
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
+// Logger
+app.use((req, res, next) => {
+  console.log(`[${new Date().toLocaleTimeString()}] ➡️ ${req.method} request to: ${req.url}`);
+  next();
+});
+
+app.use('/api/papers', paperRoutes);
+// 2. ADD THIS MOUNT POINT FOR YOUR AUTH ROUTER:
+app.use('/api/auth', authRoutes); 
+
+// ... Rest of your server.js file ...
 const app = express();
 
 app.use(cors());
