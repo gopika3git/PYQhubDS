@@ -1,13 +1,39 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const jwt = require('jsonwebtoken');
+
+// --- PASSPORT GOOGLE STRATEGY CONFIGURATION ---
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'YOUR_GOOGLE_CLIENT_SECRET',
+    callbackURL: "/api/auth/google/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    // Extract user email from Google Profile safely
+    const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
+    
+    if (!email) {
+      return done(new Error("No email found in Google profile"), null);
+    }
+
+    // Pass the user information to the next step
+    const user = {
+      _id: profile.id,
+      email: email,
+      displayName: profile.displayName
+    };
+    
+    return done(null, user);
+  }
+));
 
 // 1. Initiates the Google OAuth Flow
 router.get('/google', (req, res, next) => {
   passport.authenticate('google', {
     scope: ['profile', 'email'],
-    hd: 'vitstudent.ac.in',
+    hd: 'vitstudent.ac.in', // Restricts account selection to this domain on the Google UI
     session: false,
   })(req, res, next);
 });
@@ -37,15 +63,15 @@ router.get('/google/callback', (req, res, next) => {
       }
 
       const token = jwt.sign(
-        { id: user._id?.toString?.() || user._id, email: user.email },
+        { id: user._id, email: user.email },
         process.env.JWT_SECRET || 'fallback_secret_if_missing',
         { expiresIn: '7d' }
       );
 
       res.cookie('token', token, {
         httpOnly: false,
-        secure: true,
-        sameSite: 'none',
+        secure: process.env.NODE_ENV === 'production', // true in production, false for localhost
+        sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
 
@@ -67,5 +93,4 @@ router.get('/logout', (req, res) => {
   return res.redirect('/index.html');
 });
 
-// CRITICAL: Export the router so server.js can use it
 module.exports = router;

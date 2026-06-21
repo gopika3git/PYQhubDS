@@ -25,17 +25,31 @@ if (themeToggleBtn) {
   });
 }
 
-// --- 2. EMAIL-ONLY LOGIN (validate email exists and allow session) ---
+// --- 2. EMAIL-ONLY LOGIN (validate email exists with a 3-second cooldown) ---
 const loginForm = document.getElementById('login-form');
 const loginEmailInput = document.getElementById('login-email');
 const loginStatus = document.getElementById('login-status');
+const submitButton = loginForm ? loginForm.querySelector('button[type="submit"]') : null;
+
+// Lock flag to prevent continuous rapid execution
+let isRequestCooldown = false;
 
 if (loginForm) {
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // 1. If cooldown is active, intercept the submit event and alert user
+    if (isRequestCooldown) {
+      loginStatus.textContent = 'Please wait 3 seconds before trying again...';
+      return;
+    }
+
     const email = loginEmailInput.value.trim();
     loginStatus.textContent = 'Verifying...';
+    
+    // 2. Lock execution loop and visually disable submit button
+    isRequestCooldown = true;
+    if (submitButton) submitButton.disabled = true;
 
     try {
       const resp = await fetch('/api/auth/login', {
@@ -57,9 +71,17 @@ if (loginForm) {
     } catch (err) {
       loginStatus.textContent = 'Network error';
       console.error(err);
+    } finally {
+      // 3. Initiate the mandatory 3-second cooldown window before allowing next run
+      setTimeout(() => {
+        isRequestCooldown = false;
+        if (submitButton) submitButton.disabled = false;
+        
+        // Clear status text if it's currently showing the cooldown warning
+        if (loginStatus.textContent.includes('Please wait')) {
+          loginStatus.textContent = '';
+        }
+      }, 3000); // 3000 milliseconds = 3 seconds
     }
   });
 }
-
-
-

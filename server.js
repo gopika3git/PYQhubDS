@@ -5,42 +5,27 @@ const cors = require('cors');
 const ImageKit = require('imagekit');
 const path = require('path');
 
+// 1. Route Imports
 const paperRoutes = require(path.resolve(__dirname, 'routes/paperRoutes'));
-// ... Your other imports ...
-// 1. ADD THIS IMPORT FOR AUTH ROUTES:
 const authRoutes = require(path.resolve(__dirname, 'routes/authRoutes')); 
 
-
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
-
-// Logger
-app.use((req, res, next) => {
-  console.log(`[${new Date().toLocaleTimeString()}] ➡️ ${req.method} request to: ${req.url}`);
-  next();
-});
-
-app.use('/api/papers', paperRoutes);
-// 2. ADD THIS MOUNT POINT FOR YOUR AUTH ROUTER:
-app.use('/api/auth', authRoutes); 
-
-// ... Rest of your server.js file ...
 const app = express();
 
+// 2. Middleware Configuration
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// Logger
+// Request Logger Middleware
 app.use((req, res, next) => {
   console.log(`[${new Date().toLocaleTimeString()}] ➡️ ${req.method} request to: ${req.url}`);
   next();
 });
 
+// 3. API Route Registration
 app.use('/api/papers', paperRoutes);
+app.use('/api/auth', authRoutes); 
 
 // ImageKit Setup
 const imagekit = new ImageKit({
@@ -58,14 +43,21 @@ app.get('/api/imagekit-auth', (req, res) => {
   }
 });
 
-// Landing -> dashboard
+// Landing Page Redirect
 app.get('/', (req, res) => {
   res.redirect('/dashboard.html');
 });
 
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error('🔴 GLOBAL ERROR:', err.stack);
   res.status(500).json({ success: false, error: err.message });
+});
+
+// 4. Local Server Listener
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server is spinning up on http://localhost:${PORT}`);
 });
 
 module.exports = app;
