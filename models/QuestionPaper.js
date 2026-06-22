@@ -9,7 +9,8 @@ const QuestionPaperSchema = new mongoose.Schema({
         url: { type: String, required: true },
         thumbnailUrl: { type: String }
     }],
-    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
+    // ⬇️ CHANGE THIS LINE HERE TO A STRING TYPE ⬇️
+    uploadedBy: { type: String, required: false }, 
     uploadedAt: { type: Date, default: Date.now }
 });
 
