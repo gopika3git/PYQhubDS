@@ -17,12 +17,17 @@ exports.uploadPaper = async (req, res) => {
         console.log("📥 RECEIVED PAYLOAD AT CONTROLLER:", req.body);
         const { subjectName, subjectCode, examType, images, uploadedBy } = req.body;
 
+        // uploadedBy is optional in no-auth mode.
+        // If the client sends a string like "Anonymous", normalize it to null.
+        // This prevents Mongoose casting errors if the deployed schema expects ObjectId.
+        const normalizedUploadedBy = (!uploadedBy || uploadedBy === 'Anonymous') ? null : uploadedBy;
+
         const newPaper = new QuestionPaper({
             subjectName,
             subjectCode,
             examType,
             images: images || [],
-            uploadedBy: uploadedBy || null
+            uploadedBy: normalizedUploadedBy
         });
 
         console.log("💾 Writing document...");
