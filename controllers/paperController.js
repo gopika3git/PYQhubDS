@@ -14,6 +14,8 @@ const imagekit = new ImageKit({
 // 1. SAVE A NEW QUESTION PAPER ENTRY IN MONGODB
 exports.uploadPaper = async (req, res) => {
     try {
+        await dbConnect();
+
         console.log("📥 RECEIVED PAYLOAD AT CONTROLLER:", req.body);
         const { subjectName, subjectCode, examType, images, uploadedBy } = req.body;
 
