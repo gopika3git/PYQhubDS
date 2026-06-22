@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-const MONGO_URL = process.env.MONGO_URL;
+const MONGO_URL = process.env.MONGO_URL || process.env.MONGODB_URI;
 
 if (!MONGO_URL) {
-  throw new Error('Please define the MONGO_URL environment variable inside your configuration settings.');
+  throw new Error('Please define MONGO_URL or MONGODB_URI environment variable inside your configuration settings.');
 }
 
 /**
