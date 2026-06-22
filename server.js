@@ -10,6 +10,7 @@ const paperRoutes = require(path.resolve(__dirname, 'routes/paperRoutes'));
 const authRoutes = require(path.resolve(__dirname, 'routes/authRoutes')); 
 
 const app = express();
+app.enable('trust proxy'); // <--- ADD THIS LINE
 
 // 2. Middleware Configuration
 app.use(cors());
