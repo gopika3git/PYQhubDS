@@ -1,25 +1,46 @@
-// utils/dbConnect.js
 const mongoose = require('mongoose');
 
-let cached = global.__mongooseConn;
+const MONGO_URL = process.env.MONGO_URL;
+
+if (!MONGO_URL) {
+  throw new Error('Please define the MONGO_URL environment variable inside your configuration settings.');
+}
+
+/**
+ * Global is used here to maintain a cached connection across hot reloads
+ * in development and serverless function invocations in Vercel.
+ */
+let cached = global.mongoose;
 
 if (!cached) {
-  cached = global.__mongooseConn = { conn: null, promise: null };
+  cached = global.mongoose = { conn: null, promise: null };
 }
 
 async function dbConnect() {
-  if (cached.conn) return cached.conn;
-
-  if (!cached.promise) {
-    const mongoUrl = process.env.MONGO_URL;
-    if (!mongoUrl) throw new Error('MONGO_URL is not defined');
-
-    cached.promise = mongoose.connect(mongoUrl);
+  if (cached.conn) {
+    return cached.conn;
   }
 
-  cached.conn = await cached.promise;
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false, // 🔑 Stops Mongoose from hanging/buffering when connection drops
+    };
+
+    cached.promise = mongoose.connect(MONGO_URL, opts).then((mongooseInstance) => {
+      console.log('Successfully connected to MongoDB Cluster');
+      return mongooseInstance;
+    });
+  }
+
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    console.error('Database connection crash registry:', e);
+    throw e;
+  }
+
   return cached.conn;
 }
 
 module.exports = dbConnect;
-

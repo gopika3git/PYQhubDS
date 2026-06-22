@@ -2,6 +2,8 @@ const QuestionPaper = require('../models/QuestionPaper');
 const path = require('path');
 const axios = require('axios');
 const ImageKit = require('imagekit');
+const dbConnect = require('../utils/dbConnect');
+
 
 // ImageKit client for server-side download proxy
 const imagekit = new ImageKit({
@@ -11,53 +13,15 @@ const imagekit = new ImageKit({
 });
 
 
-// 1. SAVE A NEW QUESTION PAPER ENTRY IN MONGODB
 exports.uploadPaper = async (req, res) => {
+    // 🔑 Ensure database is linked before running .create() or .insertOne()
+    await dbConnect(); 
+
     try {
-        console.log("📥 RECEIVED PAYLOAD AT CONTROLLER:", req.body);
-        const { subjectName, subjectCode, examType, images, uploadedBy } = req.body;
-
-        // uploadedBy is optional in no-auth mode.
-        // If the client sends a string like "Anonymous", normalize it to null.
-        // This prevents Mongoose casting errors if the deployed schema expects ObjectId.
-        const normalizedUploadedBy = (!uploadedBy || uploadedBy === 'Anonymous') ? null : uploadedBy;
-
-        const newPaper = new QuestionPaper({
-            subjectName,
-            subjectCode,
-            examType,
-            images: images || [],
-            uploadedBy: normalizedUploadedBy
-        });
-
-        console.log("💾 Writing document...");
-        await newPaper.save();
-
-        console.log("✅ SUCCESS: Saved to database!");
-        res.status(201).json({ message: 'Question Paper uploaded successfully!', paper: newPaper });
-
-    } catch (err) {
-        console.error("❌ DATABASE FAULT:", err.message);
-        res.status(500).json({ error: err.message });
-    }
-};
-
-// 2. GET ALL PAPERS (WITH FILTERS)
-exports.getPapers = async (req, res) => {
-    try {
-        const { subjectName, subjectCode, examType } = req.query;
-        let queryObj = {};
-
-        if (subjectName) queryObj.subjectName = { $regex: subjectName, $options: 'i' };
-        if (subjectCode) queryObj.subjectCode = { $regex: subjectCode, $options: 'i' };
-        if (examType) queryObj.examType = examType;
-
-        const papers = await QuestionPaper.find(queryObj);
-        res.json(papers);
-
-    } catch (err) {
-        console.error("❌ Failed to fetch papers:", err.message);
-        res.status(500).json({ error: err.message });
+        const newPaper = await QuestionPaper.create(req.body);
+        res.status(201).json({ success: true, data: newPaper });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
 };
 
