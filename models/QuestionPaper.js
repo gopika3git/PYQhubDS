@@ -9,7 +9,7 @@ const QuestionPaperSchema = new mongoose.Schema({
         url: { type: String, required: true },
         thumbnailUrl: { type: String }
     }],
-    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
     uploadedAt: { type: Date, default: Date.now }
 });
 
