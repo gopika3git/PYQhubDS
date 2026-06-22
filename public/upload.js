@@ -51,8 +51,7 @@ uploadForm && uploadForm.addEventListener('submit', async (e) => {
     }
 
     // No-auth mode: uploadedBy is optional for this controller.
-    // Keep it null to avoid depending on localStorage token/user.
-    const uploadedBy = null;
+    const uploadedBy = "Anonymous";
 
     const file = files[0];
     submitBtn.disabled = true;
