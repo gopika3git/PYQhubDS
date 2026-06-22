@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const imagekit = new ImageKit({
     publicKey: "public_0qoA3EltjzuJLUw80ihXx5hs8SQ=",
     urlEndpoint: "https://ik.imagekit.io/goqp123",
-    authenticationEndpoint: "https://pyqhubds.onrender.com/api/imagekit-auth"
+    authenticationEndpoint: "https://pyqhubds.vercel.app/api/imagekit-auth"
 });
 
 // --- 3. UPLOAD AND MAPPING CONTROL ---
@@ -82,7 +82,7 @@ uploadForm && uploadForm.addEventListener('submit', async (e) => {
         statusMsg.innerText = "Saving data...";
 
         // Send final bundle payload down to Render (no auth required)
-        const backendResponse = await fetch('https://pyqhubds.onrender.com/api/papers/upload', { 
+        const backendResponse = await fetch('/api/papers/upload', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
