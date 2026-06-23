@@ -2,6 +2,8 @@ const QuestionPaper = require('../models/QuestionPaper');
 const path = require('path');
 const axios = require('axios');
 const ImageKit = require('imagekit');
+// Use a path.resolve import so serverless bundles can find the module reliably
+const dbConnect = require(path.resolve(__dirname, '../utils/dbConnect'));
 
 // ImageKit client for server-side download proxy
 const imagekit = new ImageKit({
@@ -42,6 +44,8 @@ exports.uploadPaper = async (req, res) => {
 // 2. GET ALL PAPERS (WITH FILTERS)
 exports.getPapers = async (req, res) => {
     try {
+        await dbConnect();
+
         const { subjectName, subjectCode, examType } = req.query;
         let queryObj = {};
 
@@ -61,6 +65,8 @@ exports.getPapers = async (req, res) => {
 // 3. DELETE A QUESTION PAPER ENTRY FROM MONGODB (ADMIN ONLY)
 exports.deletePaper = async (req, res) => {
     try {
+        await dbConnect();
+
         const paperId = req.params.id;
         console.log(`🗑️ REQUEST RECEIVED: Deleting paper with ID: ${paperId}`);
 
@@ -83,6 +89,8 @@ exports.deletePaper = async (req, res) => {
 // The frontend opens the response as a new browser tab via blob URL.
 exports.downloadPaper = async (req, res) => {
     try {
+        await dbConnect();
+
         const paperId = req.params.id;
         const paper = await QuestionPaper.findById(paperId);
 

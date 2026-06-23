@@ -81,8 +81,9 @@ uploadForm && uploadForm.addEventListener('submit', async (e) => {
 
         statusMsg.innerText = "Saving data...";
 
-        // Send final bundle payload down to Render (no auth required)
+        // Send final bundle payload to this same origin (no auth required)
         const backendResponse = await fetch('/api/papers/upload', { 
+
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
