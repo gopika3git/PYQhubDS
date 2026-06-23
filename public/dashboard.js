@@ -1,7 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
   // --- Gopika's Disclaimer Banner Logic ---
+  
   const banner = document.getElementById("gopika-disclaimer");
   const closeBtn = document.getElementById("close-disclaimer");
+
+  const userName = localStorage.getItem('userName'); 
+    const userDisplay = document.getElementById('user-display');
+
+    if (userDisplay && userName) {
+        userDisplay.innerText = userName; 
+    }
 
   if (banner && closeBtn) {
       setTimeout(() => {

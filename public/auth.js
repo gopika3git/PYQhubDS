@@ -30,7 +30,12 @@ const loginForm = document.getElementById('login-form');
 const loginEmailInput = document.getElementById('login-email');
 const loginStatus = document.getElementById('login-status');
 const submitButton = loginForm ? loginForm.querySelector('button[type="submit"]') : null;
+// Inside your Google Auth success callback function:
+const user = response.user; // Your Google user object
 
+// Save their real full name and email to localStorage
+localStorage.setItem('userName', user.displayName); 
+localStorage.setItem('userEmail', user.email);
 // Lock flag to prevent continuous rapid execution
 let isRequestCooldown = false;
 
