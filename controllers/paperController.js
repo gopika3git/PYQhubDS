@@ -15,14 +15,14 @@ const imagekit = new ImageKit({
 exports.uploadPaper = async (req, res) => {
     try {
         console.log("📥 RECEIVED PAYLOAD AT CONTROLLER:", req.body);
-        const { subjectName, subjectCode, examType, images, uploadedBy } = req.body;
+        const { subjectName, subjectCode, examType, images } = req.body;
 
         const newPaper = new QuestionPaper({
             subjectName,
             subjectCode,
             examType,
             images: images || [],
-            uploadedBy: uploadedBy || null
+            uploadedBy: req.user ? req.user._id : null
         });
 
         console.log("💾 Writing document...");

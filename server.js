@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+// express.static moved below to protect specific routes first
 
 app.use((req, res, next) => {
     console.log(`[${new Date().toLocaleTimeString()}] ➡️ ${req.method} request sent to: ${req.url}`);
@@ -26,10 +26,8 @@ app.use((req, res, next) => {
 });
 
 const path = require('path');
-const authRoutes = require(path.resolve(__dirname, 'routes/authRoutes'));
 const paperRoutes = require(path.resolve(__dirname, 'routes/paperRoutes'));
 
-app.use('/api/auth', authRoutes);
 app.use('/api/papers', paperRoutes);
 
 // =========================
@@ -137,7 +135,7 @@ app.get(
 app.get(
   '/auth/google/callback',
   passport.authenticate('google', {
-    failureRedirect: '/login',
+    failureRedirect: '/',
     // If you want the error message, add: failureMessage: true
     session: true,
   }),
@@ -162,16 +160,32 @@ app.get('/logout', (req, res, next) => {
 // =========================
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated && req.isAuthenticated()) return next();
-  return res.redirect('/login');
+  
+  // If it's an API request, return JSON
+  if (req.originalUrl.startsWith('/api/')) {
+    return res.status(401).json({ error: 'Access Denied: Please log in first.' });
+  }
+  
+  // Otherwise redirect to homepage
+  return res.redirect('/');
 }
 
 // =========================
-// ✅ NEW: Apply middleware to GET /dashboard (PLACE where dashboard route is defined)
+// ✅ NEW: Apply middleware to GET /dashboard and /upload
 // =========================
-// If your dashboard is a static HTML file under /public, you can still protect it by sending it here.
 app.get('/dashboard', isLoggedIn, (req, res) => {
-  // Serve your dashboard.html (static) safely after auth
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
+
+app.get('/upload', isLoggedIn, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'upload.html'));
+});
+
+app.get('/api/auth/me', (req, res) => {
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    return res.json({ user: req.user });
+  }
+  return res.status(401).json({ error: 'Not authenticated' });
 });
 
 
@@ -184,9 +198,7 @@ const imagekit = new ImageKit({
 
 // Handshake endpoint mapped exactly to what app.js expects
 // ImageKit authentication handshake token route
-// ImageKit authentication handshake token route
-// Inside server.js
-app.get('/api/imagekit-auth', (req, res) => {
+app.get('/api/imagekit-auth', isLoggedIn, (req, res) => {
   try {
       // Force cross-origin headers so Vercel can safely talk to Render
       res.header("Access-Control-Allow-Origin", "*");
@@ -207,7 +219,10 @@ mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("🚀 Connected to Cloud MongoDB successfully!"))
   .catch(err => console.error("❌ Database connection error:", err));
 
-app.get('/', (req, res) => {
+// Serve static files AFTER protecting our specific HTML routes!
+app.use(express.static('public'));
+
+app.get('/ping', (req, res) => {
   res.send('Your PYQ Platform Backend is officially running with ImageKit!');
 });
 

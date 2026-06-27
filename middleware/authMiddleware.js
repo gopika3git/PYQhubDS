@@ -1,24 +1,9 @@
-const jwt = require('jsonwebtoken');
-
-// Middleware to verify if the user is logged in via their JWT token
+// Middleware to verify if the user is logged in via their Passport Session
 const authenticateUser = (req, res, next) => {
-    // Look for the token in the incoming Request Headers
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1]; // Splits "Bearer <token>"
-
-    if (!token) {
-        return res.status(401).json({ error: "Access Denied: Please log in first." });
+    if (req.isAuthenticated && req.isAuthenticated()) {
+        return next();
     }
-
-    try {
-        // Verify the token using the secret key stored in your .env file
-        // (Make sure you have JWT_SECRET defined in your .env file!)
-        const verified = jwt.verify(token, process.env.JWT_SECRET || 'your_fallback_jwt_secret');
-        req.user = verified; // Attaches user details (id, role) to the request object
-        next(); // Pass control to the next function (or controller)
-    } catch (err) {
-        return res.status(403).json({ error: "Session expired or invalid token. Please log in again." });
-    }
+    return res.status(401).json({ error: "Access Denied: Please log in first." });
 };
 
 // Middleware to restrict access based on specific roles ('admin', 'student')

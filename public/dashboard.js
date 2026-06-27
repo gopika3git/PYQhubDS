@@ -1,10 +1,13 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // --- 1. SECURITY/SESSION GUARD ---
-  const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  if (!token || !user) {
-    window.location.href = "/index.html";
+  let user;
+  try {
+    const res = await fetch('/api/auth/me');
+    if (!res.ok) throw new Error("Not logged in");
+    const data = await res.json();
+    user = data.user;
+  } catch (err) {
+    window.location.href = "/";
     return;
   }
 
@@ -35,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Populate user greeting banner dynamically
   document.getElementById("user-display").innerText =
-    `Welcome, ${user.name || "User"}`;
+    `Welcome, ${user.displayName || user.name || "Student"}`;
 
   // --- 2. RETRIEVE GLOBAL PERSISTED THEME ---
   const themeToggleBtn = document.getElementById("theme-toggle-btn");
@@ -59,9 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- 3. LOGOUT MECHANISM ---
   const logoutBtn = document.getElementById("logout-btn");
   logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "/index.html";
+    window.location.href = "/logout";
   });
 
   // --- 4. FILTER BUTTON INITIALIZATION ---
@@ -94,12 +95,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!sampleContainer) return;
 
     try {
-      const backendBase = "https://pyqhubds.onrender.com/api";
+      const backendBase = "/api";
       // Fetch without filters, then show first 3.
       // (Still faster than showing everything in the UI; list endpoint is already supported.)
-      const response = await fetch(`${backendBase}/papers/list`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const response = await fetch(`${backendBase}/papers/list`);
 
       if (!response.ok)
         throw new Error(`Failed to load samples (${response.status})`);
@@ -134,11 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           const downloadUrl = `${backendBase}/papers/download/${paperId}`;
           try {
-            const pdfResp = await fetch(downloadUrl, {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            });
+            const pdfResp = await fetch(downloadUrl);
 
             if (!pdfResp.ok) {
               const txt = await pdfResp.text().catch(() => "");
@@ -169,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
     hasSearched = false,
   }) {
     try {
-      const backendBase = "https://pyqhubds.onrender.com/api";
+      const backendBase = "/api";
 
       let queryUrl = `${backendBase}/papers/list`;
       const params = new URLSearchParams();
@@ -182,9 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
         queryUrl += `?${params.toString()}`;
       }
 
-      const response = await fetch(queryUrl, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const response = await fetch(queryUrl);
 
       const papers = await response.json();
 
@@ -221,11 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const downloadUrl = `${backendBase}/papers/download/${paperId}`;
 
             try {
-              const pdfResp = await fetch(downloadUrl, {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-              });
+              const pdfResp = await fetch(downloadUrl);
 
               if (!pdfResp.ok) {
                 const txt = await pdfResp.text().catch(() => "");

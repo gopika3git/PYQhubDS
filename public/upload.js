@@ -1,10 +1,10 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     // --- 1. SESSION GUARD ---
-    const token = localStorage.getItem('token');
-    const userRaw = localStorage.getItem('user');
-    
-    if (!token || !userRaw) {
-        window.location.href = '/index.html';
+    try {
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) throw new Error("Not logged in");
+    } catch (err) {
+        window.location.href = '/';
         return;
     }
 
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const imagekit = new ImageKit({
     publicKey: "public_0qoA3EltjzuJLUw80ihXx5hs8SQ=",
     urlEndpoint: "https://ik.imagekit.io/goqp123",
-    authenticationEndpoint: "https://pyqhubds.onrender.com/api/imagekit-auth"
+    authenticationEndpoint: "/api/imagekit-auth"
 });
 
 // --- 3. UPLOAD AND MAPPING CONTROL ---
@@ -46,28 +46,8 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     const subjectCode = document.getElementById('sub-code').value;
     const examType = document.getElementById('exam-type').value;
 
-    const savedToken = localStorage.getItem('token');
-    const userRaw = localStorage.getItem('user');
-
     if (files.length === 0) {
         alert("Please select a PDF file to upload.");
-        return;
-    }
-
-    // EXTRACTS ID FIELD MATCHING THE CONTROLLER PAYLOAD
-    let uploadedBy = null;
-    try {
-        const parsedUser = JSON.parse(userRaw);
-        if (parsedUser) {
-            // 🔥 FIXED: Prioritizes user.id directly as sent by authController.js login return
-            uploadedBy = parsedUser.id || parsedUser._id; 
-        }
-    } catch (parseError) {
-        uploadedBy = userRaw;
-    }
-
-    if (!uploadedBy || uploadedBy === "null" || uploadedBy === "undefined") {
-        alert("Session validation failed: User identity key not found. Please log out and log back in.");
         return;
     }
 
@@ -99,25 +79,23 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
 
         statusMsg.innerText = "Saving data...";
 
-        // Send final bundle payload down to Render with explicit Bearer token header syntax
-        const backendResponse = await fetch('https://pyqhubds.onrender.com/api/papers/upload', { 
+        // Send final bundle payload down to Render securely with cookies
+        const backendResponse = await fetch('/api/papers/upload', { 
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${savedToken}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({ 
                 subjectName, 
                 subjectCode, 
                 examType, 
-                images: uploadedImages,
-                uploadedBy: uploadedBy
+                images: uploadedImages
             })
         });
 
         if (backendResponse.ok) {
             statusMsg.innerText = "🚀 PDF Paper uploaded successfully!";
-            setTimeout(() => { window.location.href = '/dashboard.html'; }, 1500);
+            setTimeout(() => { window.location.href = '/dashboard'; }, 1500);
         } else {
             const errData = await backendResponse.json();
             throw new Error(errData.message || errData.error || "Failed to save data");

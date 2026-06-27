@@ -5,8 +5,8 @@ const paperController = require('../controllers/paperController');
 // Import authentication & authorization middleware functions
 const { authenticateUser, authorizeRoles } = require('../middleware/authMiddleware');
 
-// 1. VIEW PAPERS: Anyone can see the list of papers
-router.get('/list', paperController.getPapers);
+// 1. VIEW PAPERS: Anyone logged in can see the list of papers
+router.get('/list', authenticateUser, paperController.getPapers);
 
 // 2. UPLOAD PAPERS: Must be logged in, and can be a student OR an admin
 router.post('/upload', authenticateUser, authorizeRoles('student', 'admin'), paperController.uploadPaper);
