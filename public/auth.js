@@ -67,7 +67,7 @@ if (loginForm) {
       localStorage.setItem('userName', determinedName);
       localStorage.setItem('userEmail', email);
 
-      window.location.assign('/dashboard');
+      window.location.assign('/dashboard.html');
 
     } catch (err) {
       loginStatus.textContent = 'Network error';

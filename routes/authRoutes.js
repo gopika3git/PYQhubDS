@@ -102,7 +102,8 @@ passport.use(new GoogleStrategy({
             });
       
             // Redirect to dashboard 
-            return res.redirect('/dashboard');
+            return res.redirect('/dashboard.html');
+
           } catch (error) {
             return res.status(500).json({
               success: false,
@@ -183,7 +184,7 @@ router.get('/google/callback', (req, res, next) => {
 
 
       // Redirect to dashboard (AUTH-GATED route)
-      return res.redirect('/dashboard');
+      return res.redirect('/dashboard.html');
     } catch (error) {
       return res.status(500).json({
         success: false,
