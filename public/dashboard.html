@@ -40,14 +40,15 @@
 
 
           if (!isAuthed || !isVitEmail) {
-            window.location.replace('index.html');
+            // Evict immediately without intermediate UI.
+            window.location.replace('/');
             return;
           }
 
           // Safe reveal only after checks
           document.documentElement.style.setProperty('display', 'block', 'important');
         } catch (e) {
-          window.location.replace('index.html');
+          window.location.replace('dashboard.html');
         }
       })();
     </script>

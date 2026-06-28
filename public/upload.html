@@ -36,7 +36,8 @@
 
 
           if (!isAuthed || !isVitEmail) {
-            window.location.replace('index.html');
+            // Evict immediately without intermediate UI.
+            window.location.replace('/');
             return;
           }
 

@@ -72,7 +72,10 @@ if (loginForm) {
 
       // Server returns { token, user } for JWT flows.
       // For this app, we'll simply redirect if successful.
-      window.location.href = '/dashboard';
+      // Use full redirect to server-gated dashboard; avoids intermediate static paths.
+      window.location.assign('/dashboard');
+
+
 
 
     } catch (err) {
