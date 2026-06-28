@@ -72,7 +72,8 @@ if (loginForm) {
 
       // Server returns { token, user } for JWT flows.
       // For this app, we'll simply redirect if successful.
-      window.location.href = '/dashboard'; // keep as gated route
+      window.location.href = '/dashboard';
+
 
     } catch (err) {
       loginStatus.textContent = 'Network error';

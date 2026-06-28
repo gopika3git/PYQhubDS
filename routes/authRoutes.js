@@ -76,8 +76,8 @@ router.get('/google/callback', (req, res, next) => {
       });
 
 
-      // Redirect to dashboard
-      return res.redirect('/dashboard.html');
+      // Redirect to dashboard (AUTH-GATED route)
+      return res.redirect('/dashboard');
     } catch (error) {
       return res.status(500).json({
         success: false,
@@ -91,7 +91,7 @@ router.get('/google/callback', (req, res, next) => {
 // 3. Simple Stateless Logout
 router.get('/logout', (req, res) => {
   res.clearCookie('token');
-  return res.redirect('/index.html');
+  return res.redirect(' ');
 });
 
 module.exports = router;
