@@ -12,20 +12,48 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
   if (banner && closeBtn) {
+      let hideTimer = null;
+
       setTimeout(() => {
+          // Ensure it exists when timer fires
+          if (!document.body.contains(banner)) return;
           banner.classList.add("show");
       }, 1000);
 
       const hideBanner = () => {
+          // Stop any pending auto-hide
+          if (hideTimer) clearTimeout(hideTimer);
+          hideTimer = null;
+
+          // If already removed, no-op
+          if (!banner || !document.body.contains(banner)) return;
+
           banner.classList.remove("show");
           banner.classList.add("dismissed");
-          banner.style.display = "none";
-          banner.style.pointerEvents = "none";
+
+          // Immediate, forceful style changes (covers mobile paint/z-index quirks)
+          try {
+            banner.style.setProperty("top", "-100px");
+            banner.style.setProperty("display", "none", "important");
+            banner.style.setProperty("pointer-events", "none", "important");
+          } catch (e) {}
+
+          // Hard stop for any weird mobile overlays
+          try { closeBtn.setAttribute("disabled", "true"); } catch (e) {}
+
+          // Fully remove from DOM so it can't block clicks
+          try {
+            if (banner.parentNode) banner.parentNode.removeChild(banner);
+          } catch (e) {
+            // Final fallback: keep it hidden even if removal fails
+            try { banner.style.setProperty("display", "none", "important"); } catch (e2) {}
+          }
       };
 
-      closeBtn.addEventListener("click", hideBanner);
-      setTimeout(hideBanner, 15000);
+      closeBtn.addEventListener("click", hideBanner, { passive: true });
+      hideTimer = setTimeout(hideBanner, 15000);
   }
+
   
   // --- 2. RETRIEVE GLOBAL PERSISTED THEME ---
   const themeToggleBtn = document.getElementById("theme-toggle-btn");
