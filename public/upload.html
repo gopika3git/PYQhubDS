@@ -12,14 +12,28 @@
           var m = document.cookie && document.cookie.match(/(?:^|;\s*)token=([^;]+)/i);
           if (m && m[1]) token = decodeURIComponent(m[1]);
 
-          var email = (
-            (localStorage && localStorage.getItem('userEmail')) ||
-            (sessionStorage && sessionStorage.getItem('userEmail')) ||
-            ''
-          ).toLowerCase();
+          function decodeJwtEmail(t) {
+            try {
+              var parts = (t || '').split('.');
+              if (parts.length < 2) return '';
+              var payload = parts[1]
+                .replace(/-/g, '+')
+                .replace(/_/g, '/')
+                .padEnd(Math.ceil(parts[1].length / 4) * 4, '=');
+              var json = atob(payload);
+              var data = JSON.parse(json);
+              return (data && data.email ? String(data.email) : '');
+            } catch (e) {
+              return '';
+            }
+          }
 
+          var emailFromToken = decodeJwtEmail(token).toLowerCase();
           var isAuthed = !!token;
-          var isVitEmail = email.endsWith('@vitstudent.ac.in');
+          var isVitEmail =
+            emailFromToken.endsWith('@vitstudent.ac.in') ||
+            emailFromToken.endsWith('@vit.ac.in');
+
 
           if (!isAuthed || !isVitEmail) {
             window.location.replace('index.html');
