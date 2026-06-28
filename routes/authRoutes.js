@@ -91,7 +91,7 @@ router.get('/google/callback', (req, res, next) => {
 // 3. Simple Stateless Logout
 router.get('/logout', (req, res) => {
   res.clearCookie('token');
-  return res.redirect(' ');
+  return res.redirect('/');
 });
 
 module.exports = router;
