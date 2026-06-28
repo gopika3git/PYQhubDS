@@ -175,10 +175,11 @@ router.get('/google/callback', (req, res, next) => {
         { expiresIn: '7d' }
       );
 
+      // Must be readable by client-side dashboard guard
       res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // true in production, false for localhost
-        sameSite: 'lax',
+        httpOnly: false,
+        secure: true,
+        sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
 
