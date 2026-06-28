@@ -30,11 +30,21 @@ exports.googleCallback = (req, res, next) => {
         { expiresIn: '7d' }
       );
 
+      // Main security token cookie
       res.cookie('token', token, {
         httpOnly: false,
         secure: true,
         sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000
+      });
+
+      // --- ADDED: Pass displayName securely via a transient cookie ---
+      // We fall back to the email prefix if displayName isn't available
+      const displayName = user.displayName || user.name || email.split('@')[0];
+      res.cookie('userNamePayload', encodeURIComponent(displayName), {
+        secure: true,
+        sameSite: 'none',
+        maxAge: 1 * 60 * 1000 // Lasts for 1 minute; just long enough for dashboard to pick it up
       });
 
       return res.redirect('/dashboard');
@@ -44,9 +54,4 @@ exports.googleCallback = (req, res, next) => {
       return res.redirect('/index.html?error=server_error');
     }
   })(req, res, next);
-};
-
-exports.logout = (req, res) => {
-  res.clearCookie('token');
-  return res.redirect('/index.html');
 };
