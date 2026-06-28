@@ -37,7 +37,7 @@ exports.googleCallback = (req, res, next) => {
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
 
-      return res.redirect('/dashboard.html');
+      return res.redirect('/dashboard');
 
     } catch (catchErr) {
       console.error("🔴 Fatal Catch in OAuth Callback:", catchErr);
