@@ -81,8 +81,9 @@ uploadForm && uploadForm.addEventListener('submit', async (e) => {
 
         statusMsg.innerText = "Saving data...";
 
-        // Send final bundle payload to this same origin (no auth required)
+// Send final bundle payload to this same origin (auth via httpOnly cookie)
         const backendResponse = await fetch('/api/papers/upload', { 
+
 
             method: 'POST',
             headers: {
@@ -99,7 +100,6 @@ uploadForm && uploadForm.addEventListener('submit', async (e) => {
 
         if (backendResponse.ok) {
             statusMsg.innerText = "🚀 PDF Paper uploaded successfully!";
-            setTimeout(() => { window.location.href = '/dashboard.html'; }, 1500);
         } else {
             const errData = await backendResponse.json();
             throw new Error(errData.message || errData.error || "Failed to save data");

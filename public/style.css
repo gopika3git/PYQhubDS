@@ -353,6 +353,12 @@ body {
   top: 20px;
 }
 
+.disclaimer-banner.dismissed {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+
 .disclaimer-content {
   display: flex;
   justify-content: space-between;

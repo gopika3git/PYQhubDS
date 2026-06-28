@@ -69,11 +69,12 @@ router.get('/google/callback', (req, res, next) => {
       );
 
       res.cookie('token', token, {
-        httpOnly: false,
+        httpOnly: true,
         secure: process.env.NODE_ENV === 'production', // true in production, false for localhost
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
+
 
       // Redirect to dashboard
       return res.redirect('/dashboard.html');

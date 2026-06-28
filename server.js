@@ -16,7 +16,9 @@ app.enable('trust proxy'); // <--- ADD THIS LINE
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(require('cookie-parser')());
 app.use(express.static('public'));
+
 
 // Request Logger Middleware
 app.use((req, res, next) => {
@@ -44,10 +46,22 @@ app.get('/api/imagekit-auth', (req, res) => {
   }
 });
 
+const { authenticateUser } = require(path.resolve(__dirname, 'middleware/authMiddleware'));
+
+// Auth-gated page routes
+app.get('/dashboard', authenticateUser, (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'public/dashboard.html'));
+});
+
+app.get('/upload', authenticateUser, (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'public/upload.html'));
+});
+
 // Landing Page Redirect
 app.get('/', (req, res) => {
-  res.redirect('/dashboard.html');
+  return res.redirect('/dashboard');
 });
+
 
 // Global Error Handler
 app.use((err, req, res, next) => {

@@ -4,17 +4,20 @@ const paperController = require('../controllers/paperController');
 
 
 
-// 1. VIEW PAPERS: Anyone can see the list of papers
-router.get('/list', paperController.getPapers);
+const { authenticateUser } = require('../middleware/authMiddleware');
 
-// 2. UPLOAD PAPERS: Public (no login required)
-router.post('/upload', paperController.uploadPaper);
+// 1. VIEW PAPERS: Auth required
+router.get('/list', authenticateUser, paperController.getPapers);
 
-// 3. DELETE PAPERS: Disabled in no-auth mode
-router.delete('/:id', (req, res) => res.status(403).json({ error: 'Deletion disabled in no-auth mode.' }));
+// 2. UPLOAD PAPERS: Auth required
+router.post('/upload', authenticateUser, paperController.uploadPaper);
 
-// Download proxy: Public (no login required)
-router.get('/download/:id', paperController.downloadPaper);
+// 3. DELETE PAPERS: Not enabled
+router.delete('/:id', (req, res) => res.status(403).json({ error: 'Deletion disabled.' }));
+
+// Download proxy: Auth required
+router.get('/download/:id', authenticateUser, paperController.downloadPaper);
+
 
 
 module.exports = router;

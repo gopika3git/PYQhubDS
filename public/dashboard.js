@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const hideBanner = () => {
           banner.classList.remove("show");
+          banner.classList.add("dismissed");
+          banner.style.display = "none";
+          banner.style.pointerEvents = "none";
       };
 
       closeBtn.addEventListener("click", hideBanner);
@@ -69,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!sampleContainer) return;
 
     try {
-      const response = await fetch(`${backendBase}/papers/list`);
+      const response = await fetch(`${backendBase}/papers/list`, { credentials: 'include' });
       if (!response.ok) throw new Error(`Failed to load samples (${response.status})`);
 
       const papers = await response.json();
@@ -100,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!paperId) return;
 
           try {
-            const pdfResp = await fetch(`${backendBase}/papers/download/${paperId}`);
+            const pdfResp = await fetch(`${backendBase}/papers/download/${paperId}`, { credentials: 'include' });
             if (!pdfResp.ok) throw new Error(`Download failed`);
 
             const blob = await pdfResp.blob();
@@ -129,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (params.toString()) queryUrl += `?${params.toString()}`;
 
-      const response = await fetch(queryUrl);
+      const response = await fetch(queryUrl, { credentials: 'include' });
       const papers = await response.json();
 
       if (response.ok && Array.isArray(papers) && papers.length > 0) {
@@ -157,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!paperId) return;
 
             try {
-              const pdfResp = await fetch(`${backendBase}/papers/download/${paperId}`);
+              const pdfResp = await fetch(`${backendBase}/papers/download/${paperId}`, { credentials: 'include' });
               if (!pdfResp.ok) throw new Error(`Download failed`);
 
               const blob = await pdfResp.blob();

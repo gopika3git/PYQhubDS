@@ -2,13 +2,17 @@ const jwt = require('jsonwebtoken');
 
 // Middleware to verify if the user is logged in via their JWT token
 const authenticateUser = (req, res, next) => {
-    // Look for the token in the incoming Request Headers
+    // Prefer httpOnly cookie token (stronger), fallback to Authorization header if present.
+    const cookieToken = req.cookies && req.cookies.token;
     const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1]; // Splits "Bearer <token>"
+    const headerToken = authHeader && authHeader.split(' ')[1]; // Splits "Bearer <token>"
+
+    const token = headerToken || cookieToken;
 
     if (!token) {
         return res.status(401).json({ error: "Access Denied: Please log in first." });
     }
+
 
     try {
         // Verify the token using the secret key stored in your .env file
