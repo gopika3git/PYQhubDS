@@ -39,21 +39,33 @@ exports.uploadPaper = async (req, res) => {
     }
 };
 
-// 2. GET ALL PAPERS (SANITIZED JSON FIX)
+// 2. GET ALL PAPERS (WITH ADAPTIVE DIFFICULTY FILTERING & SANITIZED JSON)
 exports.getPapers = async (req, res) => {
     try {
         await dbConnect();
 
-        const { subjectName, subjectCode, examType } = req.query;
+        const { subjectName, subjectCode, examType, difficulty } = req.query;
         let queryObj = {};
 
         if (subjectName) queryObj.subjectName = { $regex: subjectName, $options: 'i' };
         if (subjectCode) queryObj.subjectCode = { $regex: subjectCode, $options: 'i' };
         if (examType) queryObj.examType = examType;
 
-        // 🔑 SECURITY FIX: Use .select() to strip out sensitive fields like the 'images' object block
-        // This ensures anyone inspecting or extracting JSON responses only gets metadata
-        const papers = await QuestionPaper.find(queryObj).select('subjectName subjectCode examType _id');
+        // 🎯 Adaptive Difficulty Range Logic
+        if (difficulty) {
+            const diffLower = difficulty.toLowerCase();
+            if (diffLower === 'easy') {
+                queryObj.difficultyRating = { $gte: 0, $lt: 4.0 };
+            } else if (diffLower === 'medium') {
+                queryObj.difficultyRating = { $gte: 4.0, $lt: 7.0 };
+            } else if (diffLower === 'hard') {
+                queryObj.difficultyRating = { $gte: 7.0, $lte: 10.0 };
+            }
+        }
+
+        // Selected metadata + new difficulty attributes
+        const papers = await QuestionPaper.find(queryObj)
+            .select('subjectName subjectCode examType difficultyRating totalVotes totalRatingPoints _id');
 
         res.json(papers);
     } catch (err) {
@@ -62,7 +74,47 @@ exports.getPapers = async (req, res) => {
     }
 };
 
-// 3. SECURE DOWNLOAD FUNCTION
+// 3. VOTE ON QUESTION PAPER DIFFICULTY (1-10 SCALE)
+exports.votePaper = async (req, res) => {
+    try {
+        await dbConnect();
+
+        const { id } = req.params;
+        const { vote } = req.body;
+
+        const numericVote = Number(vote);
+        if (isNaN(numericVote) || numericVote < 1 || numericVote > 10) {
+            return res.status(400).json({ error: 'Vote rating must be a number between 1 and 10.' });
+        }
+
+        const paper = await QuestionPaper.findById(id);
+        if (!paper) {
+            return res.status(404).json({ error: 'Question paper not found.' });
+        }
+
+        // Calculate rolling average
+        const newTotalVotes = (paper.totalVotes || 0) + 1;
+        const newTotalPoints = (paper.totalRatingPoints || 0) + numericVote;
+        const newRating = Number((newTotalPoints / newTotalVotes).toFixed(1));
+
+        paper.totalVotes = newTotalVotes;
+        paper.totalRatingPoints = newTotalPoints;
+        paper.difficultyRating = newRating;
+
+        await paper.save();
+
+        res.json({
+            message: 'Vote submitted successfully!',
+            difficultyRating: paper.difficultyRating,
+            totalVotes: paper.totalVotes
+        });
+    } catch (err) {
+        console.error("❌ Vote error:", err.message);
+        res.status(500).json({ error: "Failed to record vote." });
+    }
+};
+
+// 4. SECURE DOWNLOAD FUNCTION
 exports.downloadPaper = async (req, res) => {
     try {
         await dbConnect();

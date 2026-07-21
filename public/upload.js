@@ -23,10 +23,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- 2. IMAGEKIT INITIALIZATION ---
+// --- 2. IMAGEKIT INITIALIZATION ---
 const imagekit = new ImageKit({
     publicKey: "public_0qoA3EltjzuJLUw80ihXx5hs8SQ=",
     urlEndpoint: "https://ik.imagekit.io/goqp123",
-    authenticationEndpoint: "https://pyqhubds.vercel.app/api/imagekit-auth"
+    authenticationEndpoint: "/api/papers/imagekit-auth" // ✅ Dynamic: Works on Localhost AND Vercel
 });
 
 // --- 3. UPLOAD AND MAPPING CONTROL ---

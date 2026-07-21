@@ -9,9 +9,22 @@ const QuestionPaperSchema = new mongoose.Schema({
         url: { type: String, required: true },
         thumbnailUrl: { type: String }
     }],
-    // ⬇️ CHANGE THIS LINE HERE TO A STRING TYPE ⬇️
     uploadedBy: { type: String, required: false }, 
-    uploadedAt: { type: Date, default: Date.now }
+    uploadedAt: { type: Date, default: Date.now },
+
+    // 🚀 Adaptive Difficulty Tracking Fields
+    totalVotes: { 
+        type: Number, 
+        default: 0 
+    },
+    totalRatingPoints: { 
+        type: Number, 
+        default: 0 
+    },
+    difficultyRating: { 
+        type: Number, 
+        default: 5.0 // Defaults to 5.0 out of 10 (Medium)
+    }
 });
 
 module.exports = mongoose.model('QuestionPaper', QuestionPaperSchema);
