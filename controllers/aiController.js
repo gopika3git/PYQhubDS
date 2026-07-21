@@ -3,7 +3,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 // Initialize Gemini with GEMINI_API_KEY from your .env
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Active production models (deprecated 1.5/2.0 series removed)
+// Active production models for fast & reliable execution
 const MODELS = [
   "gemini-3.5-flash",
   "gemini-3.1-flash-lite"
@@ -20,13 +20,16 @@ exports.askTutor = async (req, res) => {
     let reply = null;
     let lastError = null;
 
-    // Try active models in order
+    // Cycle through active models until one responds successfully
     for (const modelName of MODELS) {
       try {
         const model = genAI.getGenerativeModel({
           model: modelName,
           systemInstruction:
-            "You are a helpful academic tutor for university students reviewing past year question papers (PYQs). Provide clear, step-by-step, concise explanations for the user's questions.",
+            "You are a helpful academic tutor for university students reviewing past year question papers (PYQs). " +
+            "Provide clear, step-by-step, concise explanations. " +
+            "ALWAYS use Markdown formatting for headings, lists, and bold text. " +
+            "ALWAYS format all math equations using standard LaTeX ($...$ for inline math, $$...$$ for block math equations).",
         });
 
         const result = await model.generateContent(question.trim());

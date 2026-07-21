@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await res.json();
 
             if (res.ok) {
-                loadingDiv.innerText = data.reply;
+                renderFormattedMessage(loadingDiv, data.reply);
             } else {
                 loadingDiv.innerText = `❌ ${data.error || "Could not get an answer."}`;
             }
@@ -52,5 +52,28 @@ document.addEventListener("DOMContentLoaded", () => {
         chatBox.appendChild(msgDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
         return msgDiv;
+    }
+
+    // Parses Markdown & renders KaTeX math formulas nicely
+    function renderFormattedMessage(element, text) {
+        // 1. Convert Markdown to HTML (Headers, Bold, Lists, etc.)
+        if (typeof marked !== "undefined") {
+            element.innerHTML = marked.parse(text);
+        } else {
+            element.innerText = text;
+        }
+
+        // 2. Convert LaTeX Math ($ inline and $$ display) to clean formulas
+        if (typeof renderMathInElement !== "undefined") {
+            renderMathInElement(element, {
+                delimiters: [
+                    { left: "$$", right: "$$", display: true },
+                    { left: "$", right: "$", display: false },
+                    { left: "\\(", right: "\\)", display: false },
+                    { left: "\\[", right: "\\]", display: true }
+                ],
+                throwOnError: false
+            });
+        }
     }
 });
