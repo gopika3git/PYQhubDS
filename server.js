@@ -9,6 +9,7 @@ const rateLimit = require('express-rate-limit'); // 1. Import rate limiter
 // Route Imports
 const paperRoutes = require(path.resolve(__dirname, 'routes/paperRoutes'));
 const authRoutes = require(path.resolve(__dirname, 'routes/authRoutes')); 
+const aiRoutes = require(path.resolve(__dirname, 'routes/aiRoutes')); // <-- ADDED AI ROUTES
 const { authenticateUser } = require(path.resolve(__dirname, 'middleware/authMiddleware'));
 
 const app = express();
@@ -41,6 +42,7 @@ app.use('/api/', apiLimiter);
 // This blocks random script scraping & JSON manipulation by forcing auth on all paper endpoints
 app.use('/api/papers', authenticateUser, paperRoutes);
 app.use('/api/auth', authRoutes); 
+app.use('/api/ai', authenticateUser, aiRoutes); // <-- MOUNTED AI ROUTE (Gated with auth)
 
 // ImageKit Setup
 const imagekit = new ImageKit({

@@ -163,13 +163,145 @@ body {
   background-color: #d9534f; /* Crimson Red override for clean logouts */
 }
 
-/* --- MAIN INTERFACE SEARCH --- */
-.dashboard-container {
-  max-width: 1200px;
-  margin: 40px auto;
+/* ==========================================
+   DASHBOARD SPLIT LAYOUT (MAIN + SIDEBAR)
+   ========================================== */
+
+.dashboard-layout-wrapper {
+  display: flex;
+  max-width: 1400px;
+  margin: 30px auto;
   padding: 0 20px;
+  gap: 24px;
+  align-items: flex-start;
 }
 
+.dashboard-container {
+  flex: 1;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================
+   🤖 RIGHT SIDEBAR & CHATBOT WIDGET
+   ========================================== */
+
+.right-sidebar {
+  width: 350px;
+  position: sticky;
+  top: 20px;
+  flex-shrink: 0;
+}
+
+.sidebar-chat {
+  background-color: var(--card-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  height: 550px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.chat-header {
+  padding: 16px;
+  background-color: var(--input-bg);
+  border-bottom: 1px solid var(--input-border);
+}
+
+.chat-header h3 {
+  font-size: 1.1rem;
+  color: var(--text-color);
+  margin-bottom: 4px;
+}
+
+.chat-header p {
+  font-size: 0.8rem;
+  color: #888888;
+}
+
+.chat-box {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat-msg {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.bot-msg {
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  align-self: flex-start;
+  border-bottom-left-radius: 2px;
+  border: 1px solid var(--input-border);
+}
+
+.user-msg {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  align-self: flex-end;
+  border-bottom-right-radius: 2px;
+}
+
+.chat-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  background-color: var(--input-bg);
+  border-top: 1px solid var(--input-border);
+}
+
+.chat-form input {
+  flex: 1;
+  padding: 10px 12px;
+  background-color: var(--bg-color);
+  border: 1px solid var(--input-border);
+  color: var(--text-color);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.chat-form button {
+  padding: 10px 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.chat-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive collapse for mobile devices */
+@media (max-width: 900px) {
+  .dashboard-layout-wrapper {
+    flex-direction: column;
+  }
+  .right-sidebar {
+    width: 100%;
+    position: static;
+  }
+}
+
+/* --- MAIN INTERFACE SEARCH --- */
 .center-search {
   text-align: center;
   margin-bottom: 40px;
@@ -429,8 +561,8 @@ body {
   flex-direction: column;   /* Forces elements to stack top-to-bottom */
   align-items: center;      /* Centers everything horizontally */
   justify-content: center;  /* Centers everything vertically on the screen */
-  flex: 1;                  /* CHANGE: Allows it to scale naturally inside .auth-body */
-  gap: 12px;                /* FIX: Reduced from 32px to bring the text and card closer */
+  flex: 1;                  /* Allows it to scale naturally inside .auth-body */
+  gap: 12px;                /* Reduced to bring text and card closer */
   padding: 20px;
   background-color: #0d0d0d;
   box-sizing: border-box;
@@ -443,23 +575,14 @@ body {
   font-weight: 800;
   color: #ffffff;
   margin: 0;                /* Removes default browser spacing conflicts */
-  margin-top: -40px;        /* OPTIONAL: Pulls the title up a bit higher away from the card */
-}
-
-/* This targets your <h1 id="newlyadded_title"> */
-#newlyadded_title {
-  text-align: center;
-  font-size: 2.5rem;        /* Keeps it large, bold, and readable */
-  font-weight: 800;
-  color: #ffffff;
-  margin: 0;                /* Removes default browser spacing conflicts */
+  margin-top: -40px;        /* Pulls the title up a bit higher away from card */
 }
 
 /* This targets your <section class="card auth-card"> */
 .auth-card {
   width: 100%;
-  max-width: 450px;         /* Keeps the login card box perfectly sized like your screenshot */
-  margin: 0;                /* Prevents any layout shifting */
+  max-width: 450px;         /* Keeps login card box perfectly sized */
+  margin: 0;                /* Prevents layout shifting */
 }
 
 /* --- UPLOAD CONTAINER TWEAKS --- */
@@ -526,12 +649,12 @@ body {
 
 /* Logo Image constraints */
 .nav-logo {
-  height:180px; /* Perfectly scales the logo to fit standard navbar heights */
+  height: 180px; /* Perfectly scales logo to fit standard navbar heights */
   width: 180px;
   object-fit: contain;
 }
 
-/* Custom styling for the text beside the logo */
+/* Custom styling for text beside logo */
 .logo-text {
   font-size: 1.5rem;
   font-weight: bold;

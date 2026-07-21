@@ -14,8 +14,6 @@
           if (m && m[1]) token = decodeURIComponent(m[1]);
 
           // Decode JWT payload (client-side) to validate email suffix.
-          // Note: this does not verify the JWT signature in the browser,
-          // but it ensures the token contains the expected email domain.
           function decodeJwtEmail(t) {
             try {
               var parts = (t || '').split('.');
@@ -37,7 +35,6 @@
           var isVitEmail =
             emailFromToken.endsWith('@vitstudent.ac.in') ||
             emailFromToken.endsWith('@vit.ac.in');
-
 
           if (!isAuthed || !isVitEmail) {
             // Evict immediately without intermediate UI.
@@ -90,52 +87,83 @@
       </div>
     </header>
 
-    <main class="container dashboard-container">
-      <section id="filter-section" class="center-search">
-        <h2>🔍 Find Past Papers</h2>
-        <div class="filter-inputs-container">
-          <input
-            type="text"
-            id="filter-sub-name"
-            placeholder="Search by Subject Name"
-          />
-          <input
-            type="text"
-            id="filter-sub-code"
-            placeholder="Search by Subject Code (e.g. CSE3002)"
-          />
-          <select id="filter-type">
-            <option value="">All Exam Types</option>
-            <option value="CAT-1">CAT-1</option>
-            <option value="CAT-2">CAT-2</option>
-            <option value="FAT">FAT</option>
-          </select>
+    <!-- Dashboard Main Layout Wrapper -->
+    <div class="dashboard-layout-wrapper">
+      <main class="container dashboard-container">
+        <section id="filter-section" class="center-search">
+          <h2>🔍 Find Past Papers</h2>
+          <div class="filter-inputs-container">
+            <input
+              type="text"
+              id="filter-sub-name"
+              placeholder="Search by Subject Name"
+            />
+            <input
+              type="text"
+              id="filter-sub-code"
+              placeholder="Search by Subject Code (e.g. CSE3002)"
+            />
+            <select id="filter-type">
+              <option value="">All Exam Types</option>
+              <option value="CAT-1">CAT-1</option>
+              <option value="CAT-2">CAT-2</option>
+              <option value="FAT">FAT</option>
+            </select>
+            
+            <!-- 🎯 Adaptive Difficulty Filter Dropdown -->
+            <select id="filter-difficulty">
+              <option value="">All Difficulties</option>
+              <option value="easy">🟢 Easy (0 - 3.9)</option>
+              <option value="medium">🟡 Medium (4 - 6.9)</option>
+              <option value="hard">🔴 Hard (7 - 10)</option>
+            </select>
+
+            <button id="search-btn" class="btn search-btn">Filter Papers</button>
+          </div>
+        </section>
+
+        <section id="papers-grid" class="grid-container">
+          <h2 class="sample-title">📘 Sample Question Papers</h2>
+
+          <div class="sample-card-container">
+            <h3 class="sample-card-label">(Click to download)</h3>
+          </div>
+
+          <!-- Sample cards populated from DB (see dashboard.js) -->
+          <div id="sample-papers" class="sample-papers"></div>
+        </section>
+      </main>
+
+      <!-- 🤖 Right Sidebar AI Chatbot Widget -->
+      <aside class="right-sidebar">
+        <div class="sidebar-chat">
+          <div class="chat-header">
+            <h3>🤖 PYQ AI Assistant</h3>
+            <p>Stuck on a question? Paste it below!</p>
+          </div>
           
-          <!-- 🎯 Adaptive Difficulty Filter Dropdown -->
-          <select id="filter-difficulty">
-            <option value="">All Difficulties</option>
-            <option value="easy">🟢 Easy (0 - 3.9)</option>
-            <option value="medium">🟡 Medium (4 - 6.9)</option>
-            <option value="hard">🔴 Hard (7 - 10)</option>
-          </select>
+          <div id="chat-box" class="chat-box">
+            <div class="chat-msg bot-msg">
+              Hi! Paste any exam question here and I'll explain the step-by-step solution.
+            </div>
+          </div>
 
-          <button id="search-btn" class="btn search-btn">Filter Papers</button>
+          <form id="chat-form" class="chat-form">
+            <input 
+              type="text" 
+              id="chat-input" 
+              placeholder="Paste your question here..." 
+              autocomplete="off"
+              required 
+            />
+            <button type="submit" id="chat-send-btn">Send</button>
+          </form>
         </div>
-      </section>
-
-      <section id="papers-grid" class="grid-container">
-        <h2 class="sample-title">📘 Sample Question Papers</h2>
-
-        <div class="sample-card-container">
-          <h3 class="sample-card-label">(Click to download)</h3>
-        </div>
-
-        <!-- Sample cards populated from DB (see dashboard.js) -->
-        <div id="sample-papers" class="sample-papers"></div>
-      </section>
-    </main>
+      </aside>
+    </div>
     
     <script src="dashboard.js"></script>
+    <script src="chat.js"></script> <!-- Handles AI Chat logic -->
 
   </body>
 </html>
